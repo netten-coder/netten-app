@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-dark:   #041E17;
+  --brand:        #1D9E75;
+  --brand-light:  #25C28F;
+  --brand-muted:  #E6F7F1;
+  --surface:      #0D2B22;
+  --surface-card: #112D24;
+  --surface-border: #1F4035;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: var(--brand-dark);
+  color: #F1FAF6;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1F4035; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #1D9E75; }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid #1D9E75;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-brand-light transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-surface-card text-gray-300 font-medium px-5 py-2.5 rounded-xl border border-surface-border hover:border-brand/50 hover:text-white transition-all duration-150;
+  }
+  .card {
+    @apply bg-surface-card border border-surface-border rounded-2xl p-5;
+  }
+  .input {
+    @apply w-full bg-surface border border-surface-border rounded-xl px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-brand/60 transition-colors text-sm;
+  }
+  .label {
+    @apply block text-sm font-medium text-gray-400 mb-1.5;
+  }
+  .badge-green {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-brand/20 text-brand-light;
+  }
+  .badge-yellow {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400;
+  }
+  .badge-red {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400;
+  }
+  .badge-gray {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-500/20 text-gray-400;
+  }
+}

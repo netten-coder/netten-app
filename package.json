@@ -1,0 +1,20 @@
+{
+  "name": "netten",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Netten — Accept any payment. Settle in RLUSD. Instantly.",
+  "workspaces": ["server", "apps/web", "apps/mobile"],
+  "scripts": {
+    "dev:api": "cd server && pnpm dev",
+    "dev:web": "cd apps/web && pnpm dev",
+    "dev": "concurrently \"pnpm dev:api\" \"pnpm dev:web\"",
+    "db:push": "cd server && npx prisma db push",
+    "db:studio": "cd server && npx prisma studio",
+    "build": "cd apps/web && pnpm build",
+    "lint": "cd server && pnpm lint && cd ../apps/web && pnpm lint",
+    "typecheck": "cd server && pnpm typecheck && cd ../apps/web && pnpm typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

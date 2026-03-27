@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Environment — NEVER commit this
+.env
+.env.local
+.env.production
+
+# Build outputs
+.next/
+dist/
+build/
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Expo / React Native
+.expo/
+ios/
+android/
+
+# Vercel
+.vercel/
+
+# Prisma
+prisma/migrations/
+
+# Test coverage
+coverage/

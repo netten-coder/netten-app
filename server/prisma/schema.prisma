@@ -1,0 +1,174 @@
+// server/prisma/schema.prisma
+// Netten database schema
+// Run: pnpm db:push to create tables in Supabase
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── MERCHANT ──────────────────────────────────────────────────────────────────
+model Merchant {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  businessName  String?
+  country       String?
+  timezone      String   @default("UTC")
+  xrplAddress   String?
+  isVerified    Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  plan          String   @default("STARTER")
+
+  // Netten Rewards — graduated quarterly (stealth)
+  rewardBalance       Float @default(0)
+  totalRewardsEarned  Float @default(0)
+  txnCountSinceReward Int   @default(0)
+
+  // Add-on subscriptions
+  auditAddon      Boolean   @default(false)
+  auditAddonSince DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions  Transaction[]
+  invoices      Invoice[]
+  paymentLinks  PaymentLink[]
+  rewardEvents  RewardEvent[]
+  webhooks      Webhook[]
+  magicTokens   MagicToken[]
+  refreshTokens RefreshToken[]
+
+  @@index([email])
+}
+
+// ── TRANSACTION ───────────────────────────────────────────────────────────────
+model Transaction {
+  id                String   @id @default(cuid())
+  merchantId        String
+  fromCoin          String
+  fromAmount        Float?
+  toAmount          Float
+  netAmount         Float
+  platformFeeAmount Float    @default(0)
+  gasAmount         Float    @default(0)
+  exchangeRate      Float?
+  status            String   @default("PENDING")
+  xrplTxHash        String?
+  payAddress        String?
+  payAmount         Float?
+  description       String?
+  source            String   @default("DIRECT")
+  paymentLinkId     String?
+  invoiceId         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  merchant    Merchant     @relation(fields: [merchantId], references: [id])
+  rewardEvent RewardEvent?
+
+  @@index([merchantId])
+  @@index([status])
+}
+
+// ── INVOICE ───────────────────────────────────────────────────────────────────
+model Invoice {
+  id            String    @id @default(cuid())
+  merchantId    String
+  invoiceNumber String    @unique
+  clientName    String
+  clientEmail   String?
+  amountUsd     Float
+  acceptedCoins String[]
+  status        String    @default("UNPAID")
+  dueDate       DateTime?
+  description   String?
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id])
+
+  @@index([merchantId])
+}
+
+// ── PAYMENT LINK ──────────────────────────────────────────────────────────────
+model PaymentLink {
+  id            String    @id @default(cuid())
+  merchantId    String
+  slug          String    @unique
+  description   String
+  amountUsd     Float?
+  acceptedCoins String[]
+  isActive      Boolean   @default(true)
+  useCount      Int       @default(0)
+  maxUses       Int?
+  expiresAt     DateTime?
+  url           String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id])
+
+  @@index([slug])
+  @@index([merchantId])
+}
+
+// ── REWARD EVENT ──────────────────────────────────────────────────────────────
+// Tracks every reward deposit and withdrawal
+model RewardEvent {
+  id            String   @id @default(cuid())
+  merchantId    String
+  type          String   // TXN_MILESTONE | VOLUME_BONUS | WITHDRAWAL
+  amountRlusd   Float
+  transactionId String?  @unique
+  xrplTxHash    String?
+  description   String
+  createdAt     DateTime @default(now())
+
+  merchant    Merchant     @relation(fields: [merchantId], references: [id])
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@index([merchantId])
+}
+
+// ── WEBHOOK ───────────────────────────────────────────────────────────────────
+model Webhook {
+  id         String   @id @default(cuid())
+  merchantId String
+  url        String
+  events     String[]
+  secret     String
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  merchant Merchant @relation(fields: [merchantId], references: [id])
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+model MagicToken {
+  id         String   @id @default(cuid())
+  merchantId String
+  token      String   @unique
+  expiresAt  DateTime
+  used       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  merchant Merchant @relation(fields: [merchantId], references: [id])
+
+  @@index([token])
+}
+
+model RefreshToken {
+  id         String   @id @default(cuid())
+  merchantId String
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  merchant Merchant @relation(fields: [merchantId], references: [id])
+}
