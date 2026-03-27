@@ -100,7 +100,7 @@ export default function RewardsPage() {
           <div className="flex justify-end mb-4">
             <button
               onClick={() => setShowWithdraw(true)}
-              disabled={!(summary?.balance > 0 || merchant?.rewardBalance > 0)}
+              disabled={!(summary?.balance > 0 || ( merchant?.rewardBalance ?? 0) > 0)}
               className="btn-primary text-sm disabled:opacity-40"
             >
               Withdraw RLUSD
