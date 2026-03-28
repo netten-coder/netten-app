@@ -31,7 +31,7 @@ export async function invoiceRoutes(app: FastifyInstance) {
     }).parse(req.body)
 
     const count = await db.invoice.count({ where: { merchantId: req.user.merchantId } })
-    const invoice = await db.invoice.create({
+    const invoice = await (db.invoice as any).create({
       data: {
         ...data,
         merchantId:    req.user.merchantId,
