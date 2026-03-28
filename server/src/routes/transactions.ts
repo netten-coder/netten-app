@@ -47,7 +47,7 @@ export async function transactionRoutes(app: FastifyInstance) {
     const totalProcessingFee = platformFee + alchemyCost + 0.0001  // platform + alchemy + xrpl gas
     const netAmount   = data.amountUsd - totalProcessingFee
 
-    const txn = await db.transaction.create({
+    const txn = await (db.transaction as any).create({
       data: {
         merchantId:        req.user.merchantId,
         fromCoin:          data.fromCoin,

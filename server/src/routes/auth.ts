@@ -15,13 +15,13 @@ export async function authRoutes(app: FastifyInstance) {
 
     let merchant = await db.merchant.findUnique({ where: { email } })
     if (!merchant) {
-      merchant = await db.merchant.create({ data: { email } })
+      merchant = await (db.merchant as any).create({ data: { email } })
     }
 
     const token     = nanoid(32)
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
 
-    await db.magicToken.create({ data: { merchantId: merchant.id, token, expiresAt } })
+    await (db.magicToken as any).create({ data: { merchantId: merchant.id, token, expiresAt } })
 
     const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify?token=${token}`
 
@@ -65,7 +65,7 @@ export async function authRoutes(app: FastifyInstance) {
     const refreshHash = await bcrypt.hash(refreshRaw, 10)
     const refreshExp  = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
-    await db.refreshToken.create({ data: { merchantId: magicToken.merchantId, tokenHash: refreshHash, expiresAt: refreshExp } })
+    await (db.refreshToken as any).create({ data: { merchantId: magicToken.merchantId, tokenHash: refreshHash, expiresAt: refreshExp } })
 
     reply.setCookie('netten_refresh', refreshRaw, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 7 * 24 * 60 * 60 })
     return reply.send({ accessToken, merchant: magicToken.merchant })
