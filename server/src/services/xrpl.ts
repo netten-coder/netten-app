@@ -37,7 +37,7 @@ class XRPLService {
       }] : undefined,
     }
 
-    const result = await this.client.submitAndWait(payment as any as any, { wallet: this.wallet })
+    const result = await this.client.submitAndWait(payment, { wallet: this.wallet })
     return result
   }
 
@@ -46,7 +46,7 @@ class XRPLService {
       command: 'subscribe',
       accounts: [address],
     })
-    this.client.on('transaction', (tx) => {
+    this.client.on('transaction', (tx: any) => {
       if (tx.transaction.Destination === address) {
         onPayment(tx)
       }
@@ -57,4 +57,3 @@ class XRPLService {
 }
 
 export const xrplService = new XRPLService()
-// force rebuild Sat Mar 28 05:50:28 PDT 2026
