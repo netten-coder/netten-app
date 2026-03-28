@@ -37,7 +37,7 @@ export async function linkRoutes(app: FastifyInstance) {
     const slug = nanoid(10)
     const url  = `${process.env.NEXT_PUBLIC_APP_URL}/pay/${slug}`
 
-    return db.paymentLink.create({
+    return (db as any).paymentLink.create({
       data: { ...data, merchantId: req.user.merchantId, slug, url, expiresAt: data.expiresAt ? new Date(data.expiresAt) : undefined },
     })
   })

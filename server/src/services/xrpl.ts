@@ -23,7 +23,7 @@ class XRPLService {
     if (!this.client.isConnected()) await this.connect()
     if (!this.wallet) throw new Error('Platform wallet not configured')
 
-    const payment: Payment = {
+    const payment: any = {
       TransactionType: 'Payment',
       Account: this.wallet.address,
       Destination: params.destination,
