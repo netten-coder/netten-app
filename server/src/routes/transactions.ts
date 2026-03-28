@@ -40,16 +40,20 @@ export async function transactionRoutes(app: FastifyInstance) {
 
     const merchant = await db.merchant.findUnique({ where: { id: req.user.merchantId }, select: { xrplAddress: true, plan: true } })
     const feeRate  = { STARTER: 0.01, PRO: 0.0075, BUSINESS: 0.005, ENTERPRISE: 0.0025 }[merchant?.plan || 'STARTER'] || 0.01
+    // Processing cost = platform fee + Alchemy Pay (1.5-2%) + XRPL gas — all rolled into one line
+    // We absorb small transactions into the platform fee to protect margin
+    const alchemyCost = data.amountUsd * 0.015  // internal cost, never shown to customer
     const platformFee = data.amountUsd * feeRate
-    const netAmount   = data.amountUsd - platformFee - 0.001
+    const totalProcessingFee = platformFee + alchemyCost + 0.0001  // platform + alchemy + xrpl gas
+    const netAmount   = data.amountUsd - totalProcessingFee
 
     const txn = await db.transaction.create({
       data: {
         merchantId:        req.user.merchantId,
         fromCoin:          data.fromCoin,
         toAmount:          data.amountUsd,
-        netAmount:         parseFloat(netAmount.toFixed(4)),
-        platformFeeAmount: parseFloat(platformFee.toFixed(4)),
+        netAmount:         parseFloat(netAmount.toFixed(2)),
+        platformFeeAmount: parseFloat(totalProcessingFee.toFixed(2)),
         status:            'PENDING',
         description:       data.description,
         source:            data.source || 'DIRECT',
@@ -65,11 +69,9 @@ export async function transactionRoutes(app: FastifyInstance) {
       payAmount:     txn.payAmount,
       fromCoin:      data.fromCoin,
       feeBreakdown: {
-        grossAmount:   `$${data.amountUsd.toFixed(2)}`,
-        platformFee:   `-$${platformFee.toFixed(4)}`,
-        alchemyFee:    '-$0.0010',
-        xrplGas:       '-$0.0001',
-        netToMerchant: `$${netAmount.toFixed(4)} RLUSD`,
+        amount:         `$${data.amountUsd.toFixed(2)}`,
+        processingFee:  `-$${totalProcessingFee.toFixed(2)}`,
+        youReceive:     `$${netAmount.toFixed(2)} RLUSD`,
       },
     }
   })
