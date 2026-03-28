@@ -37,7 +37,7 @@ class XRPLService {
       }] : undefined,
     }
 
-    const result = await this.client.submitAndWait(payment, { wallet: this.wallet })
+    const result = await this.client.submitAndWait(payment as any, { wallet: this.wallet })
     return result
   }
 
