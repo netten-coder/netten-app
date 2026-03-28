@@ -1,5 +1,5 @@
 // server/src/services/xrpl.ts
-import { Client, Wallet, Payment, convertStringToHex } from 'xrpl'
+import { Client, Wallet, convertStringToHex } from 'xrpl'
 
 const RLUSD_ISSUER = process.env.RLUSD_ISSUER_ADDRESS || 'rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh'
 const RLUSD_CURRENCY = 'USD'
@@ -37,7 +37,7 @@ class XRPLService {
       }] : undefined,
     }
 
-    const result = await this.client.submitAndWait(payment as any, { wallet: this.wallet })
+    const result = await this.client.submitAndWait(payment as any as any, { wallet: this.wallet })
     return result
   }
 
