@@ -10,7 +10,7 @@ async function requireAuth(req: any, reply: any) {
 
 export async function linkRoutes(app: FastifyInstance) {
   app.get('/resolve/:slug', async (req: any, reply) => {
-    const link = await db.paymentLink.findUnique({
+    const link = await (db as any).paymentLink.findUnique({
       where: { slug: req.params.slug },
       include: { merchant: { select: { businessName: true, xrplAddress: true } } },
     })
@@ -22,7 +22,7 @@ export async function linkRoutes(app: FastifyInstance) {
   app.addHook('onRequest', requireAuth)
 
   app.get('/', async (req: any) => {
-    return db.paymentLink.findMany({ where: { merchantId: req.user.merchantId }, orderBy: { createdAt: 'desc' } })
+    return (db as any).paymentLink.findMany({ where: { merchantId: req.user.merchantId }, orderBy: { createdAt: 'desc' } })
   })
 
   app.post('/', async (req: any) => {
@@ -43,7 +43,7 @@ export async function linkRoutes(app: FastifyInstance) {
   })
 
   app.delete('/:id', async (req: any) => {
-    await db.paymentLink.update({ where: { id: req.params.id, merchantId: req.user.merchantId }, data: { isActive: false } })
+    await (db as any).paymentLink.update({ where: { id: req.params.id, merchantId: req.user.merchantId }, data: { isActive: false } })
     return { success: true }
   })
 }
