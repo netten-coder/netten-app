@@ -183,3 +183,12 @@ model Waitlist {
   referralCount Int      @default(0)
   createdAt     DateTime @default(now())
 }
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+model WaitlistEntry {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  referralCode String   @unique
+  referredBy   String?
+  createdAt    DateTime @default(now())
+}
