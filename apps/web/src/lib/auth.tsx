@@ -46,7 +46,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    refresh().finally(() => setLoading(false))
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('netten_token') : null
+    if (stored) {
+      setAccessToken(stored)
+      api.merchant.me()
+        .then(setMerchant)
+        .catch(() => refresh())
+        .finally(() => setLoading(false))
+    } else {
+      refresh().finally(() => setLoading(false))
+    }
   }, [])
 
   async function login(email: string) {
