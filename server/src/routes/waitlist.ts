@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
-import { db } from '../db'
+import { db } from '../lib/db'
 
 export async function waitlistRoutes(app: FastifyInstance) {
   app.post('/waitlist', async (req, reply) => {
