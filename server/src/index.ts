@@ -11,7 +11,7 @@ import { transactionRoutes } from './routes/transactions'
 import { invoiceRoutes }     from './routes/invoices'
 import { linkRoutes }        from './routes/payment-links'
 import { rewardRoutes }      from './routes/rewards'
-import { webhookRoutes }
+import { webhookRoutes }     from './routes/webhooks'
 import { waitlistRoutes }     from './routes/waitlist'
 import { xrplService }       from './services/xrpl'
 
