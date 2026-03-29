@@ -29,8 +29,14 @@ export default function WaitlistPage() {
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    const stored = localStorage.getItem('netten_waitlist_count')
-    if (stored) setCount(parseInt(stored))
+    // Always fetch live count from API
+    fetch('/api/waitlist')
+      .then(r => r.json())
+      .then(d => { if (d.count) { setCount(d.count); localStorage.setItem('netten_waitlist_count', String(d.count)); }})
+      .catch(() => {
+        const stored = localStorage.getItem('netten_waitlist_count')
+        if (stored) setCount(parseInt(stored))
+      })
     const myCode = localStorage.getItem('netten_my_referral')
     if (myCode) { setMyReferralCode(myCode); setSubmitted(true) }
     const params = new URLSearchParams(window.location.search)
