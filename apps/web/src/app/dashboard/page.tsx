@@ -65,7 +65,15 @@ export default function DashboardPage() {
     )
   }
 
-  const d = data!
+  if (!data) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-64">
+        <p className="text-gray-400">Unable to load dashboard. Please try refreshing.</p>
+      </div>
+    )
+  }
+
+  const d = data
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
