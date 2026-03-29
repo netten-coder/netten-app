@@ -13,6 +13,18 @@ export async function authRoutes(app: FastifyInstance) {
   app.post('/login', async (req, reply) => {
     const { email } = z.object({ email: z.string().email() }).parse(req.body)
 
+    // Waitlist gate - only approved emails get merchant access
+    const onWaitlist = await (db as any).waitlistEntry.findFirst({
+      where: { email: { equals: email, mode: 'insensitive' } }
+    })
+    const isFounder = ['netten.founders@gmail.com', 'headofsneakz@gmail.com'].includes(email.toLowerCase())
+    if (!onWaitlist && !isFounder) {
+      return reply.status(403).send({
+        error: 'Not on waitlist',
+        message: 'Netten is in early access. Join the waitlist at netten.app'
+      })
+    }
+
     let merchant = await db.merchant.findUnique({ where: { email } })
     if (!merchant) {
       merchant = await (db.merchant as any).create({ data: { email } })
