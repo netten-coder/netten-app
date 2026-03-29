@@ -173,3 +173,13 @@ model RefreshToken {
 
   merchant Merchant @relation(fields: [merchantId], references: [id])
 }
+
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
+model Waitlist {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  referralCode  String   @unique
+  referredById  String?
+  referralCount Int      @default(0)
+  createdAt     DateTime @default(now())
+}
