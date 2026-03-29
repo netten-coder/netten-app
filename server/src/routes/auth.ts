@@ -48,7 +48,7 @@ export async function authRoutes(app: FastifyInstance) {
 
     const magicToken = await db.magicToken.findUnique({
       where: { token },
-      include: { merchant: true },
+      include: { merchant: true }, // sessionPreference included
     })
 
     if (!magicToken || magicToken.used || magicToken.expiresAt < new Date()) {

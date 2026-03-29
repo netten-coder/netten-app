@@ -1,147 +1,210 @@
 'use client'
-import { useState } from 'react'
-import { api } from '@/lib/api'
-import { useAuth } from '@/lib/auth'
+import { useEffect, useState } from 'react'
+import { api, setAccessToken } from '@/lib/api'
+
+const SESSION_OPTIONS = [
+  {
+    value: '7d',
+    label: 'High Security',
+    duration: 'Re-authenticate every 7 days',
+    description: 'Best for shared or public devices. Most secure.',
+    security: 5,
+    color: 'text-green-400',
+    badge: 'bg-green-500/20 text-green-400 border-green-500/30',
+  },
+  {
+    value: '30d',
+    label: 'Recommended',
+    duration: 'Stay logged in for 30 days',
+    description: 'Balanced security for personal devices.',
+    security: 4,
+    color: 'text-brand-light',
+    badge: 'bg-brand/20 text-brand-light border-brand/30',
+  },
+  {
+    value: '90d',
+    label: 'Maximum Convenience',
+    duration: 'Stay logged in for 90 days',
+    description: 'Low security. Only use on private devices you own.',
+    security: 2,
+    color: 'text-yellow-400',
+    badge: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+  },
+]
+
+function SecurityDots({ level }: { level: number }) {
+  return (
+    <div className="flex gap-1">
+      {[1,2,3,4,5].map(i => (
+        <div key={i} className={`w-2 h-2 rounded-full ${i <= level ? 'bg-brand' : 'bg-surface-border'}`} />
+      ))}
+    </div>
+  )
+}
 
 export default function SettingsPage() {
-  const { merchant, refresh } = useAuth()
-  const [profile, setProfile] = useState({
-    businessName: merchant?.businessName || '',
-    country: merchant?.country || '',
-    timezone: merchant?.timezone || 'UTC',
-  })
-  const [wallet, setWallet] = useState(merchant?.xrplAddress || '')
-  const [generatedWallet, setGeneratedWallet] = useState<{ address: string; seed: string } | null>(null)
-  const [savingProfile, setSavingProfile] = useState(false)
-  const [savingWallet, setSavingWallet] = useState(false)
-  const [generating, setGenerating] = useState(false)
-  const [profileMsg, setProfileMsg] = useState('')
-  const [walletMsg, setWalletMsg] = useState('')
+  const [merchant, setMerchant] = useState<any>(null)
+  const [saving, setSaving] = useState(false)
+  const [sessionPref, setSessionPref] = useState('30d')
+  const [profileSaved, setProfileSaved] = useState(false)
+  const [walletSaved, setWalletSaved] = useState(false)
+  const [xrplAddress, setXrplAddress] = useState('')
+  const [newWallet, setNewWallet] = useState<{ address: string; seed: string } | null>(null)
+  const [businessName, setBusinessName] = useState('')
+  const [country, setCountry] = useState('')
+  const [timezone, setTimezone] = useState('UTC')
 
-  async function saveProfile(e: React.FormEvent) {
-    e.preventDefault()
-    setSavingProfile(true)
-    try {
-      await api.merchant.update(profile)
-      await refresh()
-      setProfileMsg('Saved!')
-      setTimeout(() => setProfileMsg(''), 3000)
-    } catch (err: any) {
-      setProfileMsg(err.message)
-    } finally {
-      setSavingProfile(false)
-    }
-  }
+  useEffect(() => {
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('netten_token') : null
+    if (!stored) { window.location.href = '/auth/login'; return }
+    setAccessToken(stored)
+    api.merchant.me().then((m: any) => {
+      setMerchant(m)
+      setBusinessName(m.businessName || '')
+      setCountry(m.country || '')
+      setTimezone(m.timezone || 'UTC')
+      setXrplAddress(m.xrplAddress || '')
+      setSessionPref(m.sessionPreference || '30d')
+    }).catch(() => { window.location.href = '/auth/login' })
+  }, [])
 
-  async function saveWallet(e: React.FormEvent) {
-    e.preventDefault()
-    setSavingWallet(true)
+  async function saveProfile() {
+    setSaving(true)
     try {
-      await api.merchant.addWallet(wallet)
-      await refresh()
-      setWalletMsg('Wallet saved!')
-      setTimeout(() => setWalletMsg(''), 3000)
-    } catch (err: any) {
-      setWalletMsg(err.message)
-    } finally {
-      setSavingWallet(false)
-    }
+      await api.merchant.update({ businessName, country, timezone, sessionPreference: sessionPref })
+      setProfileSaved(true)
+      setTimeout(() => setProfileSaved(false), 3000)
+    } catch(e) {} finally { setSaving(false) }
   }
 
   async function generateWallet() {
-    setGenerating(true)
     try {
-      const w = await api.merchant.newWallet()
-      setGeneratedWallet(w)
-      setWallet(w.address)
-    } catch (err: any) {
-      alert(err.message)
-    } finally {
-      setGenerating(false)
-    }
+      const data = await api.merchant.newWallet()
+      setNewWallet(data)
+      setXrplAddress(data.address)
+    } catch(e) {}
   }
+
+  async function saveWallet() {
+    setSaving(true)
+    try {
+      await api.merchant.addWallet(xrplAddress)
+      setWalletSaved(true)
+      setNewWallet(null)
+      setTimeout(() => setWalletSaved(false), 3000)
+    } catch(e) {} finally { setSaving(false) }
+  }
+
+  if (!merchant) return (
+    <div className="p-8 flex items-center justify-center min-h-64">
+      <div className="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin" />
+    </div>
+  )
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-6">
-      <div className="mb-2">
+      <div>
         <h1 className="text-white font-semibold text-2xl">Settings</h1>
         <p className="text-gray-400 text-sm mt-0.5">Manage your Netten account</p>
       </div>
 
-      {/* Profile */}
-      <div className="card">
-        <h2 className="text-white font-medium mb-4">Business Profile</h2>
-        <form onSubmit={saveProfile} className="space-y-3">
-          <div>
-            <label className="label">Email</label>
-            <input className="input opacity-60 cursor-not-allowed" value={merchant?.email || ''} disabled />
-          </div>
-          <div>
-            <label className="label">Business name</label>
-            <input className="input" value={profile.businessName} onChange={e => setProfile(p => ({ ...p, businessName: e.target.value }))} placeholder="Acme Inc." />
-          </div>
-          <div>
-            <label className="label">Country</label>
-            <input className="input" value={profile.country} onChange={e => setProfile(p => ({ ...p, country: e.target.value }))} placeholder="US" />
-          </div>
-          <div>
-            <label className="label">Timezone</label>
-            <input className="input" value={profile.timezone} onChange={e => setProfile(p => ({ ...p, timezone: e.target.value }))} placeholder="America/New_York" />
-          </div>
-          <div className="flex items-center gap-3 pt-1">
-            <button type="submit" disabled={savingProfile} className="btn-primary text-sm">
-              {savingProfile ? 'Saving…' : 'Save profile'}
-            </button>
-            {profileMsg && <span className="text-sm text-brand-light">{profileMsg}</span>}
-          </div>
-        </form>
+      {/* Business Profile */}
+      <div className="card space-y-4">
+        <h2 className="text-white font-semibold">Business Profile</h2>
+        <div>
+          <label className="text-gray-400 text-xs mb-1 block">Email</label>
+          <input value={merchant.email} disabled className="input w-full opacity-50 cursor-not-allowed" />
+        </div>
+        <div>
+          <label className="text-gray-400 text-xs mb-1 block">Business name</label>
+          <input value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="Acme Inc." className="input w-full" />
+        </div>
+        <div>
+          <label className="text-gray-400 text-xs mb-1 block">Country</label>
+          <input value={country} onChange={e => setCountry(e.target.value)} placeholder="US" className="input w-full" />
+        </div>
+        <div>
+          <label className="text-gray-400 text-xs mb-1 block">Timezone</label>
+          <input value={timezone} onChange={e => setTimezone(e.target.value)} placeholder="UTC" className="input w-full" />
+        </div>
+        <button onClick={saveProfile} disabled={saving} className="btn-primary">
+          {profileSaved ? '✓ Saved' : saving ? 'Saving...' : 'Save profile'}
+        </button>
       </div>
 
-      {/* XRPL Wallet */}
-      <div className="card">
-        <h2 className="text-white font-medium mb-1">XRPL Settlement Wallet</h2>
-        <p className="text-gray-400 text-sm mb-4">All payments settle here as RLUSD on the XRP Ledger.</p>
-        <form onSubmit={saveWallet} className="space-y-3">
-          <div>
-            <label className="label">XRPL address</label>
-            <input className="input font-mono" value={wallet} onChange={e => setWallet(e.target.value)} placeholder="rXXXXXXXXXXXXXXXXXXXXX" />
+      {/* XRPL Settlement Wallet */}
+      <div className="card space-y-4">
+        <div>
+          <h2 className="text-white font-semibold">XRPL Settlement Wallet</h2>
+          <p className="text-gray-400 text-xs mt-0.5">All payments settle here as RLUSD on the XRP Ledger.</p>
+        </div>
+        <div>
+          <label className="text-gray-400 text-xs mb-1 block">XRPL address</label>
+          <input value={xrplAddress} onChange={e => setXrplAddress(e.target.value)} placeholder="rXXXXXXXXXXXXXXXXXXXX" className="input w-full font-mono text-sm" />
+        </div>
+        {newWallet && (
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 space-y-2">
+            <p className="text-yellow-400 text-xs font-semibold">⚠️ Save your seed phrase — it will never be shown again</p>
+            <p className="text-yellow-300 text-xs font-mono break-all">{newWallet.seed}</p>
           </div>
+        )}
+        <div className="flex gap-3">
+          <button onClick={generateWallet} className="btn-secondary">Generate new wallet</button>
+          <button onClick={saveWallet} disabled={saving} className="btn-primary">
+            {walletSaved ? '✓ Saved' : saving ? 'Saving...' : 'Save wallet'}
+          </button>
+        </div>
+      </div>
 
-          {generatedWallet && (
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
-              <p className="text-yellow-300 text-xs font-bold mb-2">⚠ Save your seed phrase — it will never be shown again</p>
-              <p className="text-gray-300 text-xs font-mono break-all">{generatedWallet.seed}</p>
-            </div>
-          )}
-
-          <div className="flex items-center gap-3">
-            <button type="button" onClick={generateWallet} disabled={generating} className="btn-secondary text-sm">
-              {generating ? 'Generating…' : 'Generate new wallet'}
+      {/* Session Security */}
+      <div className="card space-y-4">
+        <div>
+          <h2 className="text-white font-semibold">Session Security</h2>
+          <p className="text-gray-400 text-xs mt-0.5">Choose how long you stay logged in on this device. New device logins always trigger a security alert regardless of this setting.</p>
+        </div>
+        <div className="space-y-3">
+          {SESSION_OPTIONS.map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => setSessionPref(opt.value)}
+              className={`w-full text-left p-4 rounded-xl border transition-all ${
+                sessionPref === opt.value
+                  ? 'border-brand bg-brand/10'
+                  : 'border-surface-border bg-surface hover:border-brand/40'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-3">
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                    sessionPref === opt.value ? 'border-brand' : 'border-gray-600'
+                  }`}>
+                    {sessionPref === opt.value && <div className="w-2 h-2 rounded-full bg-brand" />}
+                  </div>
+                  <span className="text-white font-medium text-sm">{opt.label}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full border ${opt.badge}`}>{opt.duration}</span>
+                </div>
+                <SecurityDots level={opt.security} />
+              </div>
+              <p className="text-gray-400 text-xs ml-7">{opt.description}</p>
             </button>
-            <button type="submit" disabled={savingWallet || !wallet} className="btn-primary text-sm">
-              {savingWallet ? 'Saving…' : 'Save wallet'}
-            </button>
-            {walletMsg && <span className="text-sm text-brand-light">{walletMsg}</span>}
-          </div>
-        </form>
+          ))}
+        </div>
+        <button onClick={saveProfile} disabled={saving} className="btn-primary">
+          {profileSaved ? '✓ Security preference saved' : saving ? 'Saving...' : 'Save security preference'}
+        </button>
       </div>
 
       {/* Plan */}
       <div className="card">
-        <h2 className="text-white font-medium mb-1">Plan</h2>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white text-lg font-semibold capitalize">{merchant?.plan || 'Starter'}</p>
-            <p className="text-gray-500 text-xs mt-0.5">
-              {merchant?.plan === 'STARTER' && '1.0% platform fee'}
-              {merchant?.plan === 'PRO' && '0.75% platform fee'}
-              {merchant?.plan === 'BUSINESS' && '0.50% platform fee'}
-              {merchant?.plan === 'ENTERPRISE' && '0.25% platform fee'}
-            </p>
+            <h2 className="text-white font-semibold">Plan</h2>
+            <p className="text-brand-light font-bold text-lg mt-1">{merchant.plan}</p>
+            <p className="text-gray-400 text-xs">1.0% platform fee</p>
           </div>
-          <span className="badge-green capitalize">{merchant?.plan}</span>
+          <span className="text-xs px-3 py-1 rounded-full bg-brand/20 text-brand-light border border-brand/30">{merchant.plan}</span>
         </div>
-        <p className="text-gray-500 text-xs mt-3">To upgrade, contact <a href="mailto:support@netten.app" className="text-brand hover:underline">support@netten.app</a></p>
+        <p className="text-gray-500 text-xs mt-3">To upgrade, contact <a href="mailto:support@netten.app" className="text-brand hover:text-brand-light">support@netten.app</a></p>
       </div>
     </div>
   )
