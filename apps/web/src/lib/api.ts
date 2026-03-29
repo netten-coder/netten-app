@@ -2,10 +2,14 @@
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
-let accessToken: string | null = null
+let accessToken: string | null = typeof window !== "undefined" ? localStorage.getItem("netten_token") : null
 
 export function setAccessToken(token: string | null) {
   accessToken = token
+  if (typeof window !== "undefined") {
+    if (token) localStorage.setItem("netten_token", token)
+    else localStorage.removeItem("netten_token")
+  }
 }
 
 export function getAccessToken() {
