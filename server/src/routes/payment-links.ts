@@ -19,7 +19,12 @@ export async function linkRoutes(app: FastifyInstance) {
     return link
   })
 
-  app.addHook('onRequest', requireAuth)
+  // Public routes must be defined BEFORE the auth hook
+  // resolve is already defined above, so hook only applies to remaining routes
+  app.addHook('onRequest', async (req: any, reply: any) => {
+    if ((req.url || '').includes('/resolve/')) return
+    return requireAuth(req, reply)
+  })
 
   app.get('/', async (req: any) => {
     return (db as any).paymentLink.findMany({ where: { merchantId: req.user.merchantId }, orderBy: { createdAt: 'desc' } })
