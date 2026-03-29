@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { api } from '@/lib/api'
+import { api, setAccessToken } from '@/lib/api'
 import Link from 'next/link'
 
 interface DashboardData {
@@ -50,6 +50,7 @@ export default function DashboardPage() {
       window.location.href = '/auth/login'
       return
     }
+    if (stored) setAccessToken(stored)
     api.merchant.dashboard()
       .then(setData)
       .catch(() => { window.location.href = '/auth/login' })
