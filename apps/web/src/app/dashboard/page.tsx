@@ -45,9 +45,14 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const stored = typeof window !== 'undefined' && localStorage.getItem('netten_token')
+    if (!stored) {
+      window.location.href = '/auth/login'
+      return
+    }
     api.merchant.dashboard()
       .then(setData)
-      .catch(console.error)
+      .catch(() => { window.location.href = '/auth/login' })
       .finally(() => setLoading(false))
   }, [])
 
