@@ -39,7 +39,7 @@ export async function transactionRoutes(app: FastifyInstance) {
     }).parse(req.body)
 
     const merchant = await db.merchant.findUnique({ where: { id: req.user.merchantId }, select: { xrplAddress: true, plan: true } })
-    const feeRate  = { STARTER: 0.01, PRO: 0.0075, BUSINESS: 0.005, ENTERPRISE: 0.0025 }[merchant?.plan || 'STARTER'] || 0.01
+    const feeRate  = 0.01 // 1% flat fee across all plans
     // Processing cost = platform fee + Alchemy Pay (1.5-2%) + XRPL gas — all rolled into one line
     // We absorb small transactions into the platform fee to protect margin
     const alchemyCost = data.amountUsd * 0.015  // internal cost, never shown to customer

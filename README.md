@@ -85,9 +85,9 @@ Not advertised. Merchants discover it organically. Each doubling is a discovery 
 
 | Plan | Monthly | Txn fee |
 |------|---------|---------|
-| Starter | $29/mo | 1.0% |
-| Pro | $99/mo | 0.75% |
-| Business | $299/mo | 0.5% |
+| Starter | $55/mo | 1% |
+| Pro | $99/mo | 1% |
+| Business | $299/mo | 1% |
 | Enterprise | $999/mo | 0.25% |
 | Audit Tracker add-on | +$21/mo | — |
 
