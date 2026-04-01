@@ -200,7 +200,7 @@ export default function SettingsPage() {
           <div>
             <h2 className="text-white font-semibold">Plan</h2>
             <p className="text-brand-light font-bold text-lg mt-1">{merchant.plan}</p>
-            <p className="text-gray-400 text-xs">1.0% platform fee</p>
+            <p className="text-gray-400 text-xs">1% platform fee</p>
           </div>
           <span className="text-xs px-3 py-1 rounded-full bg-brand/20 text-brand-light border border-brand/30">{merchant.plan}</span>
         </div>
