@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "description": "Netten — Accept any payment. Settle in RLUSD. Instantly.",
-  "workspaces": ["server", "apps/web", "apps/mobile"],
+  "workspaces": [
+    "server",
+    "apps/web",
+    "apps/mobile"
+  ],
   "scripts": {
     "dev:api": "cd server && pnpm dev",
     "dev:web": "cd apps/web && pnpm dev",
@@ -16,5 +20,8 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.2.0"
   }
 }
