@@ -1,31 +1,19 @@
 'use client'
-// lib/auth.ts — Netten auth context
-
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { api, setAccessToken } from './api'
 import { useRouter } from 'next/navigation'
 
 interface Merchant {
-  id: string
-  email: string
-  businessName?: string
-  country?: string
-  timezone: string
-  xrplAddress?: string
-  isVerified: boolean
-  plan: string
-  rewardBalance: number
-  totalRewardsEarned: number
+  id: string; email: string; businessName?: string; country?: string
+  timezone: string; xrplAddress?: string; isVerified: boolean
+  plan: string; rewardBalance: number; totalRewardsEarned: number
 }
-
 interface AuthContextType {
-  merchant: Merchant | null
-  loading: boolean
+  merchant: Merchant | null; loading: boolean
   login: (email: string) => Promise<void>
   logout: () => Promise<void>
   refresh: () => Promise<void>
 }
-
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -40,32 +28,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setAccessToken(token)
       const me = await api.merchant.me()
       setMerchant(me)
+      if (typeof window !== 'undefined') localStorage.setItem('netten_merchant', JSON.stringify(me))
     } catch {
       setMerchant(null)
+      if (typeof window !== 'undefined') localStorage.removeItem('netten_merchant')
     }
   }
 
   useEffect(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('netten_token') : null
-    if (stored) {
-      setAccessToken(stored)
+    if (typeof window === 'undefined') { setLoading(false); return }
+    const storedToken    = localStorage.getItem('netten_token')
+    const storedMerchant = localStorage.getItem('netten_merchant')
+    if (!storedToken) { refresh().finally(() => setLoading(false)); return }
+    setAccessToken(storedToken)
+    if (storedMerchant) {
+      try {
+        setMerchant(JSON.parse(storedMerchant))
+        setLoading(false)
+        api.merchant.me()
+          .then(me => { setMerchant(me); localStorage.setItem('netten_merchant', JSON.stringify(me)) })
+          .catch(() => refresh())
+      } catch {
+        localStorage.removeItem('netten_merchant')
+        api.merchant.me()
+          .then(me => { setMerchant(me); localStorage.setItem('netten_merchant', JSON.stringify(me)) })
+          .catch(() => refresh())
+          .finally(() => setLoading(false))
+      }
+    } else {
       api.merchant.me()
-        .then(setMerchant)
+        .then(me => { setMerchant(me); localStorage.setItem('netten_merchant', JSON.stringify(me)) })
         .catch(() => refresh())
         .finally(() => setLoading(false))
-    } else {
-      refresh().finally(() => setLoading(false))
     }
   }, [])
 
-  async function login(email: string) {
-    await api.auth.login(email)
-  }
-
+  async function login(email: string) { await api.auth.login(email) }
   async function logout() {
     await api.auth.logout()
     setAccessToken(null)
     setMerchant(null)
+    if (typeof window !== 'undefined') localStorage.removeItem('netten_merchant')
     router.push('/auth/login')
   }
 
