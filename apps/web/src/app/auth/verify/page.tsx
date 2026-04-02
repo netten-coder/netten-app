@@ -17,11 +17,15 @@ function VerifyContent() {
       setMessage('No token provided.')
       return
     }
+
     api.auth.verify(token)
       .then((data: any) => {
         setAccessToken(data.accessToken)
+        if (typeof window !== 'undefined' && data.merchant) {
+          localStorage.setItem('netten_merchant', JSON.stringify(data.merchant))
+        }
         setStatus('success')
-        setTimeout(() => router.replace('/dashboard'), 1000)
+        router.replace('/dashboard')
       })
       .catch((err: any) => {
         setStatus('error')
@@ -38,7 +42,6 @@ function VerifyContent() {
           </div>
           <span className="text-white font-semibold text-xl tracking-tight">Netten</span>
         </div>
-
         <div className="card text-center py-8">
           {status === 'loading' && (
             <>
@@ -54,7 +57,7 @@ function VerifyContent() {
                 </svg>
               </div>
               <p className="text-white font-semibold text-lg">Signed in!</p>
-              <p className="text-gray-400 text-sm mt-1">Redirecting to dashboard…</p>
+              <p className="text-gray-400 text-sm mt-1">Taking you to your dashboard…</p>
             </>
           )}
           {status === 'error' && (
