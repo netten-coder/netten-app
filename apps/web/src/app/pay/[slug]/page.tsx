@@ -31,8 +31,8 @@ export default function PayPage() {
         if (!res.ok) { const b = await res.json().catch(() => ({})); throw new Error(b.error || `Error ${res.status}`) }
         return res.json()
       })
-      .then(setLink)
-      .catch(() => setError('Payment link not found or expired.'))
+      .then((data: any) => { setLink(data); if (data.isExpired) setError('expired') })
+      .catch(() => setError('Payment link not found.'))
       .finally(() => setLoading(false))
   }, [slug])
 

@@ -9,19 +9,25 @@ async function requireAuth(req: any, reply: any) {
 }
 
 export async function linkRoutes(app: FastifyInstance) {
-  // FIX: resolve is PUBLIC — in its own scope, NO auth hook touches it
-  // Previously the onRequest hook applied to ALL routes including this one
+  // PUBLIC — resolve by slug (no auth, available to customers + preview)
   app.get('/resolve/:slug', async (req: any, reply) => {
     const link = await (db as any).paymentLink.findUnique({
       where: { slug: req.params.slug },
       include: { merchant: { select: { businessName: true, xrplAddress: true } } },
     })
+
     if (!link || !link.isActive) return reply.status(404).send({ error: 'Link not found' })
-    if (link.expiresAt && link.expiresAt < new Date()) return reply.status(410).send({ error: 'Link expired' })
+
+    // Return the link even if expired — include a flag so the pay page
+    // can show the link details but disable payment
+    if (link.expiresAt && link.expiresAt < new Date()) {
+      return reply.send({ ...link, isExpired: true })
+    }
+
     return link
   })
 
-  // Protected routes in their own nested scope — auth hook only applies here
+  // Protected routes in nested scope — auth only applies here
   app.register(async (p: FastifyInstance) => {
     p.addHook('onRequest', requireAuth)
 
