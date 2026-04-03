@@ -84,6 +84,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { merchant, loading, logout } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
+  const hasRewards = (merchant?.rewardBalance ?? 0) > 0
 
   useEffect(() => {
     if (!loading && !merchant) router.replace('/auth/login')
@@ -115,7 +116,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Nav */}
         <nav className="flex-1 py-4 px-3 space-y-0.5 overflow-y-auto">
           {NAV.map(item => {
-            const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+            const isActive  = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+            const isRewards  = item.label === 'Rewards'
+            const glowClass  = isRewards && hasRewards && !isActive ? 'reward-glow' : ''
             return (
               <Link
                 key={item.href}
