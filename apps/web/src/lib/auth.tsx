@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // The user literally just logged in — keep them logged in.
         api.merchant.me()
           .then(me => { setMerchant(me); localStorage.setItem('netten_merchant', JSON.stringify(me)) })
-          .catch(() => { /* silently keep cached merchant — do not wipe */ })
+          .catch(() => { /* silently keep cached merchant in state — token may just be expired */ })
       } catch {
         localStorage.removeItem('netten_merchant')
         api.merchant.me()

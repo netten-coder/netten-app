@@ -118,7 +118,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {NAV.map(item => {
             const isActive  = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
             const isRewards  = item.label === 'Rewards'
-            const glowClass  = isRewards && hasRewards && !isActive ? 'reward-glow' : ''
+            const glowClass  = isRewards && hasRewards && pathname !== '/dashboard/rewards' ? 'reward-glow' : ''
             return (
               <Link
                 key={item.href}
