@@ -1,5 +1,6 @@
 // server/prisma/schema.prisma
 // Netten database schema
+// Run: pnpm db:push to create tables in Supabase
 
 generator client {
   provider = "prisma-client-js"
@@ -10,48 +11,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ── ENUMS ─────────────────────────────────────────────────────────────────────
-
-enum SubscriptionStatus {
-  TRIAL
-  ACTIVE
-  GRACE
-  PAUSED
-  SUSPENDED
-  CANCELLED
-}
-
-enum PlanType {
-  FOUNDING
-  PRO
-  STUDIO
-}
-
-enum AddOnType {
-  CSV_EXPORT
-  INVOICING
-}
-
 // ── MERCHANT ──────────────────────────────────────────────────────────────────
-
 model Merchant {
-  id            String  @id @default(cuid())
-  email         String  @unique
+  id            String   @id @default(cuid())
+  email         String   @unique
   businessName  String?
   country       String?
-  timezone      String  @default("UTC")
+  timezone      String   @default("UTC")
   xrplAddress   String?
-  isVerified    Boolean @default(false)
-  isActive      Boolean @default(true)
-  plan          String  @default("FOUNDING")
+  isVerified    Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  plan          String   @default("STARTER")
 
+  // Netten Rewards — graduated quarterly (stealth)
   rewardBalance       Float @default(0)
   totalRewardsEarned  Float @default(0)
   txnCountSinceReward Int   @default(0)
 
+  // Add-on subscriptions
   auditAddon      Boolean   @default(false)
   auditAddonSince DateTime?
-  sessionPreference String  @default("7d")
+  sessionPreference String @default("7d") // 7d | 30d | 90d
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -63,78 +43,11 @@ model Merchant {
   webhooks      Webhook[]
   magicTokens   MagicToken[]
   refreshTokens RefreshToken[]
-  wallet        Wallet?
-  subscription  Subscription?
-  addOns        AddOn[]
-  netTenCounter NetTenCounter?
 
   @@index([email])
 }
 
-// ── WALLET ────────────────────────────────────────────────────────────────────
-
-model Wallet {
-  id             String   @id @default(cuid())
-  merchantId     String   @unique
-  xrplAddress    String   @unique
-  destinationTag Int      @unique
-  createdAt      DateTime @default(now())
-
-  merchant Merchant @relation(fields: [merchantId], references: [id])
-}
-
-// ── SUBSCRIPTION ──────────────────────────────────────────────────────────────
-
-model Subscription {
-  id              String             @id @default(cuid())
-  merchantId      String             @unique
-  status          SubscriptionStatus @default(TRIAL)
-  plan            PlanType           @default(FOUNDING)
-  monthlyAmount   Decimal            @default(44.00)
-  trialStartDate  DateTime           @default(now())
-  trialEndDate    DateTime
-  lastPaymentDate DateTime?
-  nextDueDate     DateTime
-  gracePeriodEnd  DateTime?
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-
-  merchant Merchant @relation(fields: [merchantId], references: [id])
-}
-
-// ── ADD-ON ────────────────────────────────────────────────────────────────────
-
-model AddOn {
-  id         String    @id @default(cuid())
-  merchantId String
-  type       AddOnType
-  amount     Decimal
-  activeFrom DateTime  @default(now())
-  activeTo   DateTime?
-  createdAt  DateTime  @default(now())
-
-  merchant Merchant @relation(fields: [merchantId], references: [id])
-
-  @@index([merchantId])
-}
-
-// ── NET TEN COUNTER ───────────────────────────────────────────────────────────
-
-model NetTenCounter {
-  id             String    @id @default(cuid())
-  merchantId     String    @unique
-  totalCount     Int       @default(0)
-  currentQuarter Int       @default(1)
-  rewardAmount   Decimal   @default(0.25)
-  lastRewardDate DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  merchant Merchant @relation(fields: [merchantId], references: [id])
-}
-
 // ── TRANSACTION ───────────────────────────────────────────────────────────────
-
 model Transaction {
   id                String   @id @default(cuid())
   merchantId        String
@@ -164,7 +77,6 @@ model Transaction {
 }
 
 // ── INVOICE ───────────────────────────────────────────────────────────────────
-
 model Invoice {
   id            String    @id @default(cuid())
   merchantId    String
@@ -186,7 +98,6 @@ model Invoice {
 }
 
 // ── PAYMENT LINK ──────────────────────────────────────────────────────────────
-
 model PaymentLink {
   id            String    @id @default(cuid())
   merchantId    String
@@ -209,11 +120,11 @@ model PaymentLink {
 }
 
 // ── REWARD EVENT ──────────────────────────────────────────────────────────────
-
+// Tracks every reward deposit and withdrawal
 model RewardEvent {
   id            String   @id @default(cuid())
   merchantId    String
-  type          String
+  type          String   // TXN_MILESTONE | VOLUME_BONUS | WITHDRAWAL
   amountRlusd   Float
   transactionId String?  @unique
   xrplTxHash    String?
@@ -227,7 +138,6 @@ model RewardEvent {
 }
 
 // ── WEBHOOK ───────────────────────────────────────────────────────────────────
-
 model Webhook {
   id         String   @id @default(cuid())
   merchantId String
@@ -241,7 +151,6 @@ model Webhook {
 }
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
-
 model MagicToken {
   id         String   @id @default(cuid())
   merchantId String
@@ -266,7 +175,6 @@ model RefreshToken {
 }
 
 // ── WAITLIST ──────────────────────────────────────────────────────────────────
-
 model Waitlist {
   id            String   @id @default(cuid())
   email         String   @unique
@@ -276,6 +184,7 @@ model Waitlist {
   createdAt     DateTime @default(now())
 }
 
+// ── WAITLIST ──────────────────────────────────────────────────────────────────
 model WaitlistEntry {
   id           String   @id @default(cuid())
   email        String   @unique
