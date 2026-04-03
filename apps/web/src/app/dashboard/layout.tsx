@@ -99,6 +99,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen">
+      <style>{`@keyframes reward-pulse{0%,100%{box-shadow:0 0 6px rgba(29,158,117,0.5),0 0 14px rgba(29,158,117,0.2);}50%{box-shadow:0 0 14px rgba(29,158,117,0.9),0 0 28px rgba(29,158,117,0.4);}}.reward-glow{animation:reward-pulse 2s ease-in-out infinite;border:1px solid rgba(29,158,117,0.5);}`}</style>
       {/* Sidebar */}
       <aside className="w-60 shrink-0 flex flex-col bg-surface border-r border-surface-border">
         {/* Logo */}
@@ -119,7 +120,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-100 ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-100 ${glowClass} ${
                   isActive
                     ? 'bg-brand/20 text-brand-light'
                     : 'text-gray-400 hover:text-white hover:bg-surface-hover'
