@@ -15,6 +15,7 @@ import { webhookRoutes }     from './routes/webhooks'
 import { waitlistRoutes }     from './routes/waitlist'
 import { xrplService }       from './services/xrpl'
 import { subscriptionRoutes } from './routes/subscriptions'
+import { offrampRoutes }      from './routes/offramp'
 
 const app = Fastify({ logger: process.env.NODE_ENV !== 'production' })
 
@@ -59,6 +60,7 @@ async function start() {
   await app.register(rewardRoutes,      { prefix: '/api/v1/rewards' })
   await app.register(waitlistRoutes, { prefix: '/api/v1' })
   await app.register(subscriptionRoutes, { prefix: '/api/v1/subscriptions' })
+  await app.register(offrampRoutes,      { prefix: '/api/v1' })
   await app.register(webhookRoutes,     { prefix: '/api/v1/webhooks' })
 
   const port = parseInt(process.env.PORT || '3001')
