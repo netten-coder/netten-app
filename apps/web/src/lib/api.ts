@@ -98,6 +98,7 @@ export const api = {
     list:   (status?: string) => apiFetch(`/api/v1/invoices${status ? `?status=${status}` : ''}`),
     create: (data: any) => apiFetch('/api/v1/invoices', { method: 'POST', body: JSON.stringify(data) }),
     cancel: (id: string) => apiFetch(`/api/v1/invoices/${id}`, { method: 'DELETE' }),
+    send:   (id: string) => apiFetch(`/api/v1/invoices/${id}/send`, { method: 'POST' }),
   },
 
   // ── Payment Links ───────────────────────────────────────────────────────────

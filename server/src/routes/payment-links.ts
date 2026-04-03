@@ -9,6 +9,8 @@ async function requireAuth(req: any, reply: any) {
 }
 
 export async function linkRoutes(app: FastifyInstance) {
+  // FIX: resolve is PUBLIC — in its own scope, NO auth hook touches it
+  // Previously the onRequest hook applied to ALL routes including this one
   app.get('/resolve/:slug', async (req: any, reply) => {
     const link = await (db as any).paymentLink.findUnique({
       where: { slug: req.params.slug },
@@ -19,36 +21,32 @@ export async function linkRoutes(app: FastifyInstance) {
     return link
   })
 
-  // Public routes must be defined BEFORE the auth hook
-  // resolve is already defined above, so hook only applies to remaining routes
-  app.addHook('onRequest', async (req: any, reply: any) => {
-    if ((req.url || '').includes('/resolve/')) return
-    return requireAuth(req, reply)
-  })
+  // Protected routes in their own nested scope — auth hook only applies here
+  app.register(async (p: FastifyInstance) => {
+    p.addHook('onRequest', requireAuth)
 
-  app.get('/', async (req: any) => {
-    return (db as any).paymentLink.findMany({ where: { merchantId: req.user.merchantId }, orderBy: { createdAt: 'desc' } })
-  })
-
-  app.post('/', async (req: any) => {
-    const data = z.object({
-      description:   z.string(),
-      amountUsd:     z.number().positive().optional(),
-      acceptedCoins: z.array(z.string()).default(['BTC','ETH','SOL','XRP','RLUSD']),
-      maxUses:       z.number().optional(),
-      expiresAt:     z.string().optional(),
-    }).parse(req.body)
-
-    const slug = nanoid(10)
-    const url  = `${process.env.NEXT_PUBLIC_APP_URL}/pay/${slug}`
-
-    return (db as any).paymentLink.create({
-      data: { ...data, merchantId: req.user.merchantId, slug, url, expiresAt: data.expiresAt ? new Date(data.expiresAt) : undefined },
+    p.get('/', async (req: any) => {
+      return (db as any).paymentLink.findMany({ where: { merchantId: req.user.merchantId }, orderBy: { createdAt: 'desc' } })
     })
-  })
 
-  app.delete('/:id', async (req: any) => {
-    await (db as any).paymentLink.update({ where: { id: req.params.id, merchantId: req.user.merchantId }, data: { isActive: false } })
-    return { success: true }
+    p.post('/', async (req: any) => {
+      const data = z.object({
+        description:   z.string(),
+        amountUsd:     z.number().positive().optional(),
+        acceptedCoins: z.array(z.string()).default(['BTC','ETH','SOL','XRP','RLUSD']),
+        maxUses:       z.number().optional(),
+        expiresAt:     z.string().optional(),
+      }).parse(req.body)
+      const slug = nanoid(10)
+      const url = `${process.env.NEXT_PUBLIC_APP_URL}/pay/${slug}`
+      return (db as any).paymentLink.create({
+        data: { ...data, merchantId: req.user.merchantId, slug, url, expiresAt: data.expiresAt ? new Date(data.expiresAt) : undefined },
+      })
+    })
+
+    p.delete('/:id', async (req: any) => {
+      await (db as any).paymentLink.update({ where: { id: req.params.id, merchantId: req.user.merchantId }, data: { isActive: false } })
+      return { success: true }
+    })
   })
 }

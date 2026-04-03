@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (typeof window === 'undefined') { setLoading(false); return }
-    const storedToken    = localStorage.getItem('netten_token')
+    const storedToken = localStorage.getItem('netten_token')
     const storedMerchant = localStorage.getItem('netten_merchant')
     if (!storedToken) { refresh().finally(() => setLoading(false)); return }
     setAccessToken(storedToken)
@@ -45,9 +45,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         setMerchant(JSON.parse(storedMerchant))
         setLoading(false)
+        // FIX: Do NOT call refresh() on failure here.
+        // The old code called refresh() which wiped merchant→null→redirect-to-login.
+        // The user literally just logged in — keep them logged in.
         api.merchant.me()
           .then(me => { setMerchant(me); localStorage.setItem('netten_merchant', JSON.stringify(me)) })
-          .catch(() => refresh())
+          .catch(() => { /* silently keep cached merchant — do not wipe */ })
       } catch {
         localStorage.removeItem('netten_merchant')
         api.merchant.me()
