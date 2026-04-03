@@ -68,6 +68,7 @@ async function start() {
   // Connect to XRPL
   try {
     await xrplService.connect()
+    await xrplService.subscribeAllMerchantWallets()
     console.log('✓ Connected to XRP Ledger')
   } catch (err) {
     console.error('✗ XRPL connection failed:', err)
