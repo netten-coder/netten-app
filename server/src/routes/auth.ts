@@ -35,7 +35,7 @@ export async function authRoutes(app: FastifyInstance) {
     if (!magicToken || magicToken.used || magicToken.expiresAt < new Date()) return reply.status(401).send({ error: 'Invalid or expired link' })
     await db.magicToken.update({ where: { id: magicToken.id }, data: { used: true } })
     if (!magicToken.merchant.isVerified) await db.merchant.update({ where: { id: magicToken.merchantId }, data: { isVerified: true } })
-    const accessToken = app.jwt.sign({ merchantId: magicToken.merchantId }, { expiresIn: '15m' })
+    const accessToken = app.jwt.sign({ merchantId: magicToken.merchantId }, { expiresIn: '24h' })
     const refreshRaw = nanoid(64)
     const refreshHash = await bcrypt.hash(refreshRaw, 10)
     const refreshExp = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
@@ -53,7 +53,7 @@ export async function authRoutes(app: FastifyInstance) {
     let validToken = null
     for (const t of tokens) { if (await bcrypt.compare(refreshRaw, t.tokenHash)) { validToken = t; break } }
     if (!validToken) return reply.status(401).send({ error: 'Invalid refresh token' })
-    const accessToken = app.jwt.sign({ merchantId: validToken.merchantId }, { expiresIn: '15m' })
+    const accessToken = app.jwt.sign({ merchantId: validToken.merchantId }, { expiresIn: '24h' })
     return reply.send({ accessToken })
   })
 
