@@ -69,6 +69,12 @@ export default function InvoicesPage() {
   const load = useCallback(() => { api.invoices.list().then((d:any)=>setInvoices(d.invoices||[])).catch(console.error).finally(()=>setLoading(false)) },[])
   useEffect(()=>{ load() },[load])
 
+  // Poll every 10s so PAID status updates appear without manual refresh
+  useEffect(() => {
+    const interval = setInterval(() => { load() }, 10000)
+    return () => clearInterval(interval)
+  }, [load])
+
   async function createInvoice(e:React.FormEvent) {
     e.preventDefault(); setSaving(true)
     try { await api.invoices.create({...form,amountUsd:parseFloat(form.amountUsd)}); setShowForm(false); setForm(EMPTY_FORM); load() }
