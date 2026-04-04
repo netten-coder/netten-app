@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 const STEPS = [
@@ -16,6 +16,12 @@ export default function OnboardingModal({ onClose }: Props) {
   const [step, setStep] = useState(0)
   const router = useRouter()
   const current = STEPS[step]
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') handleClose() }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [])
   const isLast = step === STEPS.length - 1
 
   function handleClose() {

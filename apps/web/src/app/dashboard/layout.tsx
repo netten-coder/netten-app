@@ -178,7 +178,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* First-login onboarding modal */}
-      {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
+      {showOnboarding && <OnboardingModal onClose={() => { localStorage.setItem('netten_onboarding_complete', 'true'); setShowOnboarding(false) }} />}
 
       {/* Main content */}
       <main className="flex-1 overflow-y-auto">
