@@ -59,7 +59,22 @@ export async function merchantRoutes(app: FastifyInstance) {
 
   app.post('/wallet', async (req: any) => {
     const { xrplAddress } = z.object({ xrplAddress: z.string().min(25) }).parse(req.body)
-    return db.merchant.update({ where: { id: req.user.merchantId }, data: { xrplAddress } })
+    const merchantId = req.user.merchantId
+
+    const updated = await db.merchant.update({
+      where: { id: merchantId },
+      data:  { xrplAddress },
+    })
+
+    // #7 — Subscribe immediately so Net Ten fires from day one
+    try {
+      await xrplService.subscribeMerchantWallet(merchantId, xrplAddress)
+      console.log(`[settings] ✓ Real-time wallet subscription — merchantId=${merchantId}`)
+    } catch (err) {
+      console.error('[settings] Wallet subscription failed:', err)
+    }
+
+    return updated
   })
 
   app.get('/wallet/new', async () => {

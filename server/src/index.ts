@@ -14,6 +14,12 @@ import { rewardRoutes }      from './routes/rewards'
 import { webhookRoutes }     from './routes/webhooks'
 import { waitlistRoutes }     from './routes/waitlist'
 import { xrplService }       from './services/xrpl'
+import cron                    from 'node-cron'
+import {
+  sendRenewalPayLinks,
+  pauseExpiredAccounts,
+  suspendAbandonedAccounts,
+} from './jobs/subscriptionRenewal'
 import { subscriptionRoutes } from './routes/subscriptions'
 import { offrampRoutes }      from './routes/offramp'
 
@@ -75,6 +81,25 @@ async function start() {
   } catch (err) {
     console.error('✗ XRPL connection failed:', err)
   }
+
+  // ── Subscription cron jobs ─────────────────────────────────────────────
+  // 1st of month at 9am UTC — send renewal pay links, set GRACE status
+  cron.schedule('0 9 1 * *', async () => {
+    console.log('[cron] Running monthly renewal job...')
+    try { await sendRenewalPayLinks() }
+    catch (err) { console.error('[cron] Renewal job failed:', err) }
+  })
+
+  // Daily at 9am UTC — pause Day 10 expired + suspend Day 30 abandoned
+  cron.schedule('0 9 * * *', async () => {
+    console.log('[cron] Running daily account health check...')
+    try {
+      await pauseExpiredAccounts()
+      await suspendAbandonedAccounts()
+    } catch (err) { console.error('[cron] Account health check failed:', err) }
+  })
+
+  console.log('✓ Subscription cron jobs scheduled (renewal: 1st/month, health: daily)')
 }
 
 start().catch(err => {
