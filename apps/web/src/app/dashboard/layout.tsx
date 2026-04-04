@@ -1,8 +1,9 @@
 'use client'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth'
+import OnboardingModal from '@/components/OnboardingModal'
 
 const NAV = [
   {
@@ -69,6 +70,11 @@ const NAV = [
     ),
   },
   {
+    href: '/dashboard/guide',
+    label: 'Getting Started',
+    icon: (<svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>),
+  },
+  {
     href: '/dashboard/settings',
     label: 'Settings',
     icon: (
@@ -85,6 +91,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter()
   const pathname = usePathname()
   const hasRewards = (merchant?.rewardBalance ?? 0) > 0
+  const [showOnboarding, setShowOnboarding] = React.useState(false)
+
+  React.useEffect(() => {
+    if (merchant && typeof window !== 'undefined') {
+      const seen = localStorage.getItem('netten_onboarding_complete')
+      if (!seen) setShowOnboarding(true)
+    }
+  }, [merchant])
 
   useEffect(() => {
     if (!loading && !merchant) router.replace('/auth/login')
@@ -162,6 +176,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
       </aside>
+
+      {/* First-login onboarding modal */}
+      {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
 
       {/* Main content */}
       <main className="flex-1 overflow-y-auto">
