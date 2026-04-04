@@ -20,6 +20,7 @@ import {
   pauseExpiredAccounts,
   suspendAbandonedAccounts,
 } from './jobs/subscriptionRenewal'
+import { sweepFeesToRewardsPool } from './jobs/rewardsSweep'
 import { subscriptionRoutes } from './routes/subscriptions'
 import { offrampRoutes }      from './routes/offramp'
 
@@ -99,7 +100,14 @@ async function start() {
     } catch (err) { console.error('[cron] Account health check failed:', err) }
   })
 
-  console.log('✓ Subscription cron jobs scheduled (renewal: 1st/month, health: daily)')
+  // Every Sunday at midnight UTC — sweep fee revenue into rewards pool
+  cron.schedule('0 0 * * 0', async () => {
+    console.log('[cron] Running weekly rewards pool sweep...')
+    try { await sweepFeesToRewardsPool() }
+    catch (err) { console.error('[cron] Rewards sweep failed:', err) }
+  })
+
+  console.log('✓ Subscription cron jobs scheduled (renewal: 1st/month, health: daily, sweep: weekly)')
 }
 
 start().catch(err => {
