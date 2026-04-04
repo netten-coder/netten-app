@@ -1,144 +1,220 @@
 /**
  * @file netTen.ts
- * @description Net Ten reward engine — the core incentive mechanism of Netten.
+ * @description Net Ten reward engine — Netten's core merchant loyalty mechanism.
  *
- * Overview:
- *   Every confirmed incoming XRPL payment increments a merchant's transaction
- *   counter. Rewards accumulate throughout each calendar quarter and are
- *   distributed automatically at the start of the following quarter.
+ * Reward Levels (tenure-based, not calendar-based):
+ *   Every merchant starts at Level 1 on their first day.
+ *   Advancing requires BOTH time on Netten AND minimum lifetime transactions.
  *
- * Calendar Quarter Schedule:
- *   Q1  Jan–Mar  →  $0.25 RLUSD per 10-txn milestone  →  distributed April 1
- *   Q2  Apr–Jun  →  $0.50 RLUSD per 10-txn milestone  →  distributed July 1
- *   Q3  Jul–Sep  →  $1.00 RLUSD per 10-txn milestone  →  distributed October 1
- *   Q4  Oct–Dec  →  $2.00 RLUSD per 10-txn milestone  →  distributed January 1
+ *   Level 1  $0.25 RLUSD  Default — day one, no threshold
+ *   Level 2  $0.50 RLUSD  3+ months + 30+ lifetime txns
+ *   Level 3  $1.00 RLUSD  6+ months + 60+ lifetime txns
+ *   Level 4  $2.00 RLUSD  9+ months + 90+ lifetime txns
  *
- * How it works:
- *   1. Each confirmed payment increments the merchant's NetTenCounter.
- *   2. Every 10th transaction creates a pending RewardCredit for the current quarter.
- *   3. At the start of each new quarter (via cron), all pending credits are
- *      disbursed as RLUSD directly to the merchant's XRPL wallet.
- *   4. The reward rate advances each quarter, permanently capping at $2.00 in Q4.
+ * Why tenure-based?
+ *   Calendar quarters are unfair — a merchant joining in October would
+ *   immediately earn at $2.00 Q4 rate while a January merchant starts at $0.25.
+ *   Tenure-based levels ensure every merchant has the same journey regardless
+ *   of when they signed up.
  *
- * Fee transparency:
- *   Netten collects 1% from the customer (network fee added at checkout) and
- *   1% from the merchant (deducted from settlement) — 2% total per transaction.
- *   The XRPL ledger fee (~$0.000025) is absorbed by Netten and never passed on.
- *
- * Idempotency:
- *   The NetTenCounter is upserted atomically in PostgreSQL. Reward credits are
- *   created as separate records and only disbursed once per quarter, preventing
- *   double-payments across server restarts or network interruptions.
+ * How rewards fire:
+ *   Every confirmed XRPL payment increments the merchant counter.
+ *   Every 10th transaction triggers an immediate RLUSD reward at their current level.
+ *   When both time + txn thresholds are crossed, the merchant levels up and
+ *   receives an email notification.
  */
 
 import { db }              from '../../lib/db'
 import { sendRLUSDReward } from '../xrplService'
+import { Resend }          from 'resend'
 
-// ── Reward Configuration ───────────────────────────────────────────────────
+const resend = new Resend(process.env.RESEND_API_KEY)
 
-/**
- * RLUSD reward amount per 10-transaction milestone, keyed by calendar quarter.
- * Q4 is the permanent cap — merchants earning in Q4 and beyond always earn $2.00.
- */
-const REWARD_BY_QUARTER: Readonly<Record<number, number>> = {
-  1: 0.25,
-  2: 0.50,
-  3: 1.00,
-  4: 2.00,
+// ── Level Configuration ────────────────────────────────────────────────────
+
+interface RewardLevel {
+  level:       number
+  rate:        number   // RLUSD per milestone
+  monthsMin:   number   // months on Netten required
+  txnsMin:     number   // lifetime txns required
+  label:       string
 }
 
-/**
- * Maps each calendar month (1–12) to its fiscal quarter (1–4).
- * Used to determine the active reward rate based on the current date.
- */
-const MONTH_TO_QUARTER: Readonly<Record<number, number>> = {
-  1: 1, 2: 1, 3: 1,   // Q1: January – March
-  4: 2, 5: 2, 6: 2,   // Q2: April – June
-  7: 3, 8: 3, 9: 3,   // Q3: July – September
-  10: 4, 11: 4, 12: 4, // Q4: October – December
-}
+const REWARD_LEVELS: RewardLevel[] = [
+  { level: 1, rate: 0.25, monthsMin: 0, txnsMin:  0, label: 'Level 1' },
+  { level: 2, rate: 0.50, monthsMin: 3, txnsMin: 30, label: 'Level 2' },
+  { level: 3, rate: 1.00, monthsMin: 6, txnsMin: 60, label: 'Level 3' },
+  { level: 4, rate: 2.00, monthsMin: 9, txnsMin: 90, label: 'Level 4' },
+]
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 /**
- * Returns the current calendar quarter (1–4) based on today's date.
- * Used to determine the active reward rate at the time of each milestone.
+ * Returns the number of full months between two dates.
  */
-function getCurrentCalendarQuarter(): number {
-  const month = new Date().getMonth() + 1 // getMonth() is 0-indexed
-  return MONTH_TO_QUARTER[month] ?? 4
+function monthsSince(date: Date): number {
+  const now   = new Date()
+  const years = now.getFullYear() - date.getFullYear()
+  const months = now.getMonth() - date.getMonth()
+  return Math.max(0, years * 12 + months)
 }
 
 /**
- * Returns the reward amount for the current calendar quarter,
- * capped at Q4's rate for any quarter beyond Q4.
+ * Determines the current reward level for a merchant based on their
+ * tenure (months since createdAt) and lifetime transaction count.
+ * Both thresholds must be met to advance to the next level.
  */
-function getCurrentRewardAmount(): number {
-  const quarter = Math.min(getCurrentCalendarQuarter(), 4)
-  return REWARD_BY_QUARTER[quarter]
+function getMerchantLevel(createdAt: Date, lifetimeTxns: number): RewardLevel {
+  const tenure = monthsSince(createdAt)
+  // Walk levels in reverse — return highest level both conditions satisfy
+  for (let i = REWARD_LEVELS.length - 1; i >= 0; i--) {
+    const lvl = REWARD_LEVELS[i]
+    if (tenure >= lvl.monthsMin && lifetimeTxns >= lvl.txnsMin) {
+      return lvl
+    }
+  }
+  return REWARD_LEVELS[0]
+}
+
+/**
+ * Checks whether a merchant has just unlocked a new level with this transaction,
+ * and if so sends them a congratulatory email.
+ */
+async function checkAndNotifyLevelUp(
+  merchantId:   string,
+  email:        string,
+  businessName: string,
+  createdAt:    Date,
+  newTxnCount:  number,
+  previousRate: number,
+): Promise<void> {
+  const newLevel = getMerchantLevel(createdAt, newTxnCount)
+
+  // No level up if rate hasn't changed
+  if (newLevel.rate <= previousRate) return
+
+  console.log(
+    `[netTen] 🚀 Level up! merchantId=${merchantId} ` +
+    `${previousRate} → ${newLevel.rate} RLUSD/milestone`,
+  )
+
+  // Persist the level-up event
+  await db.rewardEvent.create({
+    data: {
+      merchantId,
+      type:        'LEVEL_UP',
+      amountRlusd: 0,
+      description: `Unlocked ${newLevel.label} — $${newLevel.rate} RLUSD per milestone`,
+    },
+  })
+
+  // Send email notification
+  try {
+    await resend.emails.send({
+      from:    'Netten <noreply@netten.app>',
+      to:      email,
+      subject: `🎉 You've unlocked a new Net Ten rate — $${newLevel.rate} RLUSD per milestone`,
+      html: `
+        <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px;background:#0a1a0f;color:#fff;border-radius:16px;">
+          <div style="margin-bottom:24px;">
+            <span style="background:#1d9e75;color:#fff;font-weight:700;padding:4px 12px;border-radius:8px;font-size:12px;letter-spacing:1px;text-transform:uppercase;">Net Ten Update</span>
+          </div>
+          <h1 style="color:#00ff88;font-size:28px;margin:0 0 8px;">You levelled up! 🚀</h1>
+          <p style="color:#9ca3af;font-size:16px;margin:0 0 24px;">Hi ${businessName || email.split('@')[0]},</p>
+          <p style="color:#d1d5db;font-size:15px;line-height:1.6;margin:0 0 24px;">
+            Your loyalty is paying off. You've unlocked <strong style="color:#00ff88;">${newLevel.label}</strong> —
+            your Net Ten reward rate has increased to
+            <strong style="color:#00ff88;">$${newLevel.rate} RLUSD</strong> per milestone.
+          </p>
+          <div style="background:#1a2e1f;border:1px solid #1d9e75;border-radius:12px;padding:20px;margin:0 0 24px;">
+            <p style="color:#9ca3af;font-size:12px;margin:0 0 4px;text-transform:uppercase;letter-spacing:1px;">Your new rate</p>
+            <p style="color:#00ff88;font-size:32px;font-weight:700;margin:0;">\$${newLevel.rate} RLUSD</p>
+            <p style="color:#6b7280;font-size:13px;margin:4px 0 0;">per every 10 transactions</p>
+          </div>
+          <p style="color:#d1d5db;font-size:14px;line-height:1.6;margin:0 0 24px;">
+            Every 10 payments you process from now on will earn you
+            <strong>$${newLevel.rate} RLUSD</strong> deposited directly to your wallet. Keep going!
+          </p>
+          <a href="https://www.netten.app/dashboard/rewards" style="display:inline-block;background:#1d9e75;color:#fff;font-weight:600;padding:12px 24px;border-radius:10px;text-decoration:none;font-size:14px;">View Rewards Dashboard →</a>
+          <p style="color:#4b5563;font-size:12px;margin:32px 0 0;">Netten · netten.app</p>
+        </div>
+      `,
+    })
+    console.log(`[netTen] Level-up email sent to ${email}`)
+  } catch (err) {
+    console.error('[netTen] Level-up email failed:', err)
+  }
 }
 
 // ── Core Function ──────────────────────────────────────────────────────────
 
 /**
- * Increments a merchant's Net Ten counter and records a pending reward credit
- * if the updated count is a multiple of 10.
- *
- * Rewards are NOT disbursed immediately — they accumulate in the reward pool
- * throughout the quarter and are distributed via the quarterly cron job at the
- * start of the following quarter (April 1, July 1, October 1, January 1).
- *
- * Called by the XRPL service after every confirmed incoming payment,
- * regardless of coin type or transaction size.
+ * Increments a merchant's Net Ten counter and fires a reward if the updated
+ * count is a multiple of 10. Reward rate is based on merchant tenure + txn count.
  *
  * @param merchantId - Netten internal merchant UUID.
  */
 export async function incrementNetTen(merchantId: string): Promise<void> {
-  // Atomically upsert the counter — safe across concurrent payment events
-  const counter = await db.netTenCounter.upsert({
-    where:  { merchantId },
-    create: {
-      merchantId,
-      totalCount:     1,
-      currentQuarter: getCurrentCalendarQuarter(),
-      rewardAmount:   getCurrentRewardAmount(),
-    },
-    update: {
-      totalCount: { increment: 1 },
-    },
+  // Fetch merchant for tenure calculation and email notification
+  const merchant = await db.merchant.findUnique({
+    where:  { id: merchantId },
+    select: { createdAt: true, email: true, businessName: true, rewardBalance: true, totalRewardsEarned: true },
   })
 
-  const count         = counter.totalCount
-  const quarter       = getCurrentCalendarQuarter()
-  const rewardAmount  = REWARD_BY_QUARTER[Math.min(quarter, 4)]
+  if (!merchant) {
+    console.warn(`[netTen] Merchant not found: ${merchantId}`)
+    return
+  }
+
+  // Atomically upsert the counter
+  const counter = await db.netTenCounter.upsert({
+    where:  { merchantId },
+    create: { merchantId, totalCount: 1, currentQuarter: 1, rewardAmount: 0.25 },
+    update: { totalCount: { increment: 1 } },
+  })
+
+  const count        = counter.totalCount
+  const previousRate = counter.rewardAmount ?? 0.25
+  const currentLevel = getMerchantLevel(merchant.createdAt, count)
+  const rewardAmount = currentLevel.rate
 
   console.log(
     `[netTen] Counter updated — merchantId=${merchantId} ` +
-    `count=${count} Q=${quarter} rate=$${rewardAmount}`,
+    `count=${count} level=${currentLevel.level} rate=$${rewardAmount}`,
+  )
+
+  // Check for level up (runs on every txn — cheap because it's just math)
+  await checkAndNotifyLevelUp(
+    merchantId,
+    merchant.email,
+    merchant.businessName ?? '',
+    merchant.createdAt,
+    count,
+    previousRate,
   )
 
   // ── Milestone check — every 10th transaction ─────────────────────────────
   if (count % 10 !== 0) return
 
   console.log(
-    `[netTen] 🎯 Milestone reached — merchantId=${merchantId} ` +
-    `count=${count} Q=${quarter} reward=$${rewardAmount} RLUSD`,
+    `[netTen] 🎯 Milestone! merchantId=${merchantId} ` +
+    `count=${count} level=${currentLevel.level} reward=$${rewardAmount} RLUSD`,
   )
 
-  // Disburse the RLUSD reward immediately to the merchant's XRPL wallet
+  // Disburse reward immediately
   await sendRLUSDReward(merchantId, rewardAmount)
 
-  // Persist the reward event for dashboard history and accounting
+  // Persist milestone event
   await db.rewardEvent.create({
     data: {
       merchantId,
       type:        'TXN_MILESTONE',
       amountRlusd: rewardAmount,
-      description: `Net Ten Q${quarter} reward — transaction #${count}`,
+      description: `Net Ten ${currentLevel.label} reward — transaction #${count}`,
     },
   })
 
-  // Update the merchant's running reward balances
+  // Update merchant balances
   await db.merchant.update({
     where: { id: merchantId },
     data: {
@@ -147,11 +223,11 @@ export async function incrementNetTen(merchantId: string): Promise<void> {
     },
   })
 
-  // Sync the counter's recorded quarter and rate to the current calendar quarter
+  // Sync counter to current level
   await db.netTenCounter.update({
     where: { merchantId },
     data: {
-      currentQuarter: quarter,
+      currentQuarter: currentLevel.level,
       rewardAmount,
       lastRewardDate: new Date(),
     },
@@ -159,6 +235,9 @@ export async function incrementNetTen(merchantId: string): Promise<void> {
 
   console.log(
     `[netTen] ✓ Reward disbursed — merchantId=${merchantId} ` +
-    `$${rewardAmount} RLUSD (Q${quarter} rate)`,
+    `$${rewardAmount} RLUSD (${currentLevel.label})`,
   )
 }
+
+// ── Export level config for frontend use ──────────────────────────────────
+export { REWARD_LEVELS, getMerchantLevel, monthsSince }
