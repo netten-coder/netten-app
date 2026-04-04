@@ -3,6 +3,21 @@ import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 
+const QUARTERS = [
+  { q: 1, label: 'Q1', months: 'Jan – Mar', rate: 0.25, color: 'text-gray-400' },
+  { q: 2, label: 'Q2', months: 'Apr – Jun', rate: 0.50, color: 'text-blue-400' },
+  { q: 3, label: 'Q3', months: 'Jul – Sep', rate: 1.00, color: 'text-purple-400' },
+  { q: 4, label: 'Q4', months: 'Oct – Dec', rate: 2.00, color: 'text-amber-400' },
+]
+
+function getCurrentQuarter(): number {
+  const month = new Date().getMonth() + 1
+  if (month <= 3) return 1
+  if (month <= 6) return 2
+  if (month <= 9) return 3
+  return 4
+}
+
 export default function RewardsPage() {
   const { merchant } = useAuth()
   const [summary, setSummary] = useState<any>(null)
@@ -13,11 +28,14 @@ export default function RewardsPage() {
   const [withdrawForm, setWithdrawForm] = useState({ toAddress: '', amount: '' })
   const [withdrawing, setWithdrawing] = useState(false)
 
+  const currentQ = getCurrentQuarter()
+  const currentRate = QUARTERS[currentQ - 1].rate
+
   useEffect(() => {
     Promise.all([api.rewards.summary(), api.rewards.history()])
       .then(([s, h]: any) => {
         setSummary(s)
-        setHistory(h.events || [])
+        setHistory((h.events || []).filter((ev: any) => ev.type === 'TXN_MILESTONE'))
       })
       .catch(console.error)
       .finally(() => setLoading(false))
@@ -29,10 +47,9 @@ export default function RewardsPage() {
     try {
       await api.rewards.withdraw(withdrawForm.toAddress, parseFloat(withdrawForm.amount))
       setShowWithdraw(false)
-      // Reload
       const [s, h]: any = await Promise.all([api.rewards.summary(), api.rewards.history()])
       setSummary(s)
-      setHistory(h.events || [])
+      setHistory((h.events || []).filter((ev: any) => ev.type === 'TXN_MILESTONE'))
     } catch (err: any) {
       alert(err.message)
     } finally {
@@ -40,17 +57,17 @@ export default function RewardsPage() {
     }
   }
 
-  const TYPE_LABELS: Record<string, string> = {
-    TXN_MILESTONE: 'Transaction milestone',
-    VOLUME_BONUS:  'Volume bonus',
-    WITHDRAWAL:    'Withdrawal',
-  }
+  const balance      = summary?.balance ?? merchant?.rewardBalance ?? 0
+  const totalEarned  = summary?.totalEarned ?? merchant?.totalRewardsEarned ?? 0
+  const txnsUntilNext = summary?.txnsUntilNext ?? 10
+  const txnsDone     = 10 - txnsUntilNext
+  const progressPct  = Math.min(100, (txnsDone / 10) * 100)
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-white font-semibold text-2xl">Rewards</h1>
-        <p className="text-gray-400 text-sm mt-0.5">Earn RLUSD automatically as you process payments</p>
+        <p className="text-gray-400 text-sm mt-0.5">Earn RLUSD automatically every 10 transactions</p>
       </div>
 
       {loading ? (
@@ -59,55 +76,93 @@ export default function RewardsPage() {
         </div>
       ) : (
         <>
-          {/* Summary Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          {/* Top stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             <div className="card bg-gradient-to-br from-brand/20 to-surface-card border-brand/30">
               <p className="text-gray-400 text-xs mb-1">Available Balance</p>
-              <p className="text-white font-bold text-3xl">{(summary?.balance || merchant?.rewardBalance || 0).toFixed(4)}</p>
+              <p className="text-white font-bold text-3xl">{balance.toFixed(4)}</p>
               <p className="text-brand-light text-sm mt-0.5">RLUSD</p>
             </div>
             <div className="card">
               <p className="text-gray-400 text-xs mb-1">Total Earned</p>
-              <p className="text-white font-semibold text-2xl">{(summary?.totalEarned || merchant?.totalRewardsEarned || 0).toFixed(4)}</p>
+              <p className="text-white font-semibold text-2xl">{totalEarned.toFixed(4)}</p>
               <p className="text-gray-500 text-sm">RLUSD lifetime</p>
-            </div>
-            <div className="card">
-              <p className="text-gray-400 text-xs mb-1">Next Milestone</p>
-              <p className="text-white font-semibold text-2xl">{summary?.txnsUntilNext ?? '—'}</p>
-              <p className="text-gray-500 text-sm">transactions away</p>
             </div>
           </div>
 
-          {/* How it works */}
+          {/* Progress to next Net Ten */}
           <div className="card mb-6">
-            <h3 className="text-white font-medium mb-3">How Netten Rewards work</h3>
-            <div className="grid grid-cols-3 gap-4 text-sm">
+            <div className="flex items-center justify-between mb-3">
               <div>
-                <p className="text-brand-light font-medium">Every 50 txns</p>
-                <p className="text-gray-400">+5 RLUSD deposited to your wallet</p>
+                <h3 className="text-white font-medium">Net Ten Progress</h3>
+                <p className="text-gray-400 text-xs mt-0.5">Every 10 transactions earns <span className="text-brand-light font-semibold">${currentRate.toFixed(2)} RLUSD</span> this quarter</p>
               </div>
-              <div>
-                <p className="text-brand-light font-medium">Every 200 txns</p>
-                <p className="text-gray-400">+25 RLUSD bonus</p>
-              </div>
-              <div>
-                <p className="text-brand-light font-medium">Every 500 txns</p>
-                <p className="text-gray-400">+75 RLUSD mega bonus</p>
+              <div className="text-right">
+                <p className="text-white font-bold text-xl">{txnsDone}<span className="text-gray-500 font-normal text-sm"> / 10</span></p>
+                <p className="text-gray-500 text-xs">{txnsUntilNext} to go</p>
               </div>
             </div>
+            <div className="w-full bg-surface-border rounded-full h-2.5 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-brand to-brand-light rounded-full transition-all duration-700"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
+            {txnsDone === 0 && (
+              <p className="text-gray-500 text-xs mt-2">Process your first payment to start the counter</p>
+            )}
+          </div>
+
+          {/* Quarter tiers */}
+          <div className="card mb-6">
+            <h3 className="text-white font-medium mb-4">Net Ten Reward Tiers</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {QUARTERS.map(({ q, label, months, rate }) => {
+                const isPast    = q < currentQ
+                const isCurrent = q === currentQ
+                const isFuture  = q > currentQ
+
+                return (
+                  <div
+                    key={q}
+                    className={`rounded-xl p-3 border transition-all ${
+                      isCurrent
+                        ? 'border-brand/50 bg-brand/10'
+                        : isPast
+                        ? 'border-surface-border bg-surface-card opacity-50'
+                        : 'border-surface-border bg-surface-card opacity-40'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={`text-xs font-bold uppercase tracking-widest ${isCurrent ? 'text-brand' : 'text-gray-500'}`}>{label}</span>
+                      {isCurrent && <span className="text-brand text-xs font-medium bg-brand/20 px-1.5 py-0.5 rounded-md">Active</span>}
+                      {isPast    && <span className="text-gray-600 text-xs">Done</span>}
+                      {isFuture  && <span className="text-gray-600 text-xs">Locked</span>}
+                    </div>
+                    <p className={`font-bold text-xl ${isCurrent ? 'text-white' : isPast ? 'text-gray-500 line-through' : 'text-gray-600'}`}>
+                      ${rate.toFixed(2)}
+                    </p>
+                    <p className="text-gray-500 text-xs mt-1">per milestone</p>
+                    <p className="text-gray-600 text-xs mt-0.5">{months}</p>
+                  </div>
+                )
+              })}
+            </div>
+            <p className="text-gray-600 text-xs mt-4">Rates reset at the start of each calendar quarter. You will be notified by email when your rate changes.</p>
           </div>
 
           {/* Withdraw */}
           <div className="flex justify-end mb-4">
             <button
               onClick={() => setShowWithdraw(true)}
-              disabled={!(summary?.balance > 0 || ( merchant?.rewardBalance ?? 0) > 0)}
+              disabled={balance <= 0}
               className="btn-primary text-sm disabled:opacity-40"
             >
               Withdraw RLUSD
             </button>
           </div>
 
+          {/* Withdraw modal */}
           {showWithdraw && (
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
               <div className="card w-full max-w-sm">
@@ -118,16 +173,10 @@ export default function RewardsPage() {
                   </button>
                 </div>
 
-                {/* Step 1 — Choose withdrawal method */}
                 {withdrawMode === 'choose' && (
                   <div className="space-y-3">
                     <p className="text-gray-400 text-sm mb-4">How would you like to receive your RLUSD?</p>
-
-                    {/* XRPL Wallet option */}
-                    <button
-                      onClick={() => setWithdrawMode('wallet')}
-                      className="w-full flex items-center gap-4 p-4 rounded-xl border border-surface-border hover:border-brand/50 hover:bg-brand/5 transition-all text-left"
-                    >
+                    <button onClick={() => setWithdrawMode('wallet')} className="w-full flex items-center gap-4 p-4 rounded-xl border border-surface-border hover:border-brand/50 hover:bg-brand/5 transition-all text-left">
                       <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center shrink-0">
                         <svg className="w-5 h-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                       </div>
@@ -137,30 +186,23 @@ export default function RewardsPage() {
                       </div>
                       <span className="text-brand text-xs font-medium bg-brand/10 px-2 py-1 rounded-lg">Free</span>
                     </button>
-
-                    {/* Bank / Card option via Alchemy Pay */}
-                    <button
-                      onClick={() => setWithdrawMode('bank')}
-                      className="w-full flex items-center gap-4 p-4 rounded-xl border border-surface-border hover:border-brand/50 hover:bg-brand/5 transition-all text-left"
-                    >
+                    <button onClick={() => setWithdrawMode('bank')} className="w-full flex items-center gap-4 p-4 rounded-xl border border-surface-border hover:border-brand/50 hover:bg-brand/5 transition-all text-left">
                       <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
                         <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
                       </div>
                       <div className="flex-1">
                         <p className="text-white font-medium text-sm">To Bank Account / Card</p>
-                        <p className="text-gray-500 text-xs mt-0.5">Visa · Mastercard · Apple Pay · Bank Transfer · 173 countries</p>
+                        <p className="text-gray-500 text-xs mt-0.5">Visa · Mastercard · Apple Pay · 160+ countries</p>
                       </div>
-                      <span className="text-blue-400 text-xs font-medium bg-blue-500/10 px-2 py-1 rounded-lg">~1.5%</span>
+                      <span className="text-blue-400 text-xs font-medium bg-blue-500/10 px-2 py-1 rounded-lg">~1%</span>
                     </button>
                   </div>
                 )}
 
-                {/* Step 2a — XRPL Wallet withdrawal */}
                 {withdrawMode === 'wallet' && (
                   <form onSubmit={withdraw} className="space-y-3">
                     <button type="button" onClick={() => setWithdrawMode('choose')} className="flex items-center gap-1 text-gray-400 hover:text-white text-xs mb-2 transition-colors">
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
-                      Back
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>Back
                     </button>
                     <div>
                       <label className="label">XRPL destination address</label>
@@ -177,30 +219,20 @@ export default function RewardsPage() {
                   </form>
                 )}
 
-                {/* Step 2b — Bank / Card via Alchemy Pay off-ramp */}
                 {withdrawMode === 'bank' && (
                   <div className="space-y-3">
                     <button type="button" onClick={() => setWithdrawMode('choose')} className="flex items-center gap-1 text-gray-400 hover:text-white text-xs mb-2 transition-colors">
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
-                      Back
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>Back
                     </button>
                     <div>
                       <label className="label">Amount to cash out (RLUSD)</label>
-                      <input
-                        type="number"
-                        step="0.0001"
-                        min="0.01"
-                        className="input"
-                        placeholder="0.25"
-                        value={withdrawForm.amount}
-                        onChange={e => setWithdrawForm(f => ({ ...f, amount: e.target.value }))}
-                      />
-                      <p className="text-gray-500 text-xs mt-1">~1.5% off-ramp fee charged by Alchemy Pay</p>
+                      <input type="number" step="0.0001" min="0.01" className="input" placeholder="0.25" value={withdrawForm.amount} onChange={e => setWithdrawForm(f => ({ ...f, amount: e.target.value }))} />
+                      <p className="text-gray-500 text-xs mt-1">~1% bank transfer fee charged by MoonPay</p>
                     </div>
                     <div className="bg-surface-card rounded-xl p-3 text-xs text-gray-400 space-y-1">
-                      <p>✓ Powered by Alchemy Pay — official Ripple RLUSD partner</p>
-                      <p>✓ 173 countries · Visa · Mastercard · Apple Pay · Bank transfer</p>
-                      <p>✓ KYC handled by Alchemy Pay — not by Netten</p>
+                      <p>✓ Powered by MoonPay — licensed global off-ramp</p>
+                      <p>✓ 160+ countries · Visa · Mastercard · Bank transfer</p>
+                      <p>✓ KYC handled by MoonPay — not by Netten</p>
                     </div>
                     <div className="flex gap-3 pt-2">
                       <button type="button" onClick={() => setWithdrawMode('choose')} className="btn-secondary flex-1">Back</button>
@@ -209,15 +241,16 @@ export default function RewardsPage() {
                           if (!withdrawForm.amount || parseFloat(withdrawForm.amount) <= 0) { alert('Enter an amount'); return }
                           setWithdrawing(true)
                           try {
-                            const res = await fetch('/api/rewards/offramp-url', {
+                            const token = localStorage.getItem('netten_token')
+                            const res = await fetch('/api/v1/rewards/offramp-url', {
                               method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
+                              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                               body: JSON.stringify({ amount: parseFloat(withdrawForm.amount) })
                             })
                             const data = await res.json()
                             if (data.url) window.open(data.url, '_blank', 'width=480,height=700')
                             else alert(data.error || 'Failed to open off-ramp')
-                          } catch { alert('Failed to connect to Alchemy Pay') }
+                          } catch { alert('Failed to connect to MoonPay') }
                           finally { setWithdrawing(false) }
                         }}
                         disabled={withdrawing}
@@ -232,24 +265,29 @@ export default function RewardsPage() {
             </div>
           )}
 
-          {/* History */}
+          {/* Net Ten reward history */}
           <div className="card p-0 overflow-hidden">
-            <div className="px-5 py-3 border-b border-surface-border">
-              <h3 className="text-white font-medium">Reward history</h3>
+            <div className="px-5 py-3 border-b border-surface-border flex items-center justify-between">
+              <h3 className="text-white font-medium">Net Ten Reward History</h3>
+              <span className="text-gray-500 text-xs">Transactions that triggered a reward</span>
             </div>
             {!history.length ? (
-              <div className="py-10 text-center text-gray-500 text-sm">No rewards yet — start processing payments!</div>
+              <div className="py-10 text-center">
+                <p className="text-gray-500 text-sm">No rewards yet</p>
+                <p className="text-gray-600 text-xs mt-1">Process 10 transactions to earn your first ${currentRate.toFixed(2)} RLUSD</p>
+              </div>
             ) : (
               <div className="divide-y divide-surface-border/50">
                 {history.map((ev: any) => (
                   <div key={ev.id} className="flex items-center justify-between px-5 py-3 hover:bg-surface-hover transition-colors">
                     <div>
-                      <p className="text-white text-sm">{TYPE_LABELS[ev.type] || ev.type}</p>
-                      <p className="text-gray-500 text-xs">{new Date(ev.createdAt).toLocaleDateString()}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-brand text-xs">⚡</span>
+                        <p className="text-white text-sm">Net Ten milestone reached</p>
+                      </div>
+                      <p className="text-gray-500 text-xs mt-0.5">{new Date(ev.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
-                    <span className={`font-medium text-sm ${ev.type === 'WITHDRAWAL' ? 'text-red-400' : 'text-brand-light'}`}>
-                      {ev.type === 'WITHDRAWAL' ? '-' : '+'}{ev.amountRlusd.toFixed(4)} RLUSD
-                    </span>
+                    <span className="font-semibold text-sm text-brand-light">+{ev.amountRlusd.toFixed(4)} RLUSD</span>
                   </div>
                 ))}
               </div>
