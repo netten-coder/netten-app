@@ -385,11 +385,11 @@ export default function WaitlistPage() {
             </div>
             <div className="nt-tier locked">
               <div className="nt-tier-label">Level 3</div>
-              <div className="nt-tier-amt">$1.00</div>
+              <div className="nt-tier-amt" style={{color:"rgba(255,255,255,.2)",letterSpacing:"3px",fontSize:"11px"}}>HIDDEN</div>
             </div>
             <div className="nt-tier locked">
               <div className="nt-tier-label">Level 4</div>
-              <div className="nt-tier-amt">$2.00</div>
+              <div className="nt-tier-amt" style={{color:"rgba(255,255,255,.2)",letterSpacing:"3px",fontSize:"11px"}}>HIDDEN</div>
             </div>
           </div>
         </div>
