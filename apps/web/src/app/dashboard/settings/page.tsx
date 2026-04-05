@@ -51,6 +51,7 @@ export default function SettingsPage() {
   const [xrplAddress, setXrplAddress] = useState('')
   const [newWallet, setNewWallet] = useState<{ address: string; seed: string } | null>(null)
   const [businessName, setBusinessName] = useState('')
+  const [avatar, setAvatar] = useState<string | null>(null)
   const [country, setCountry] = useState('')
   const [timezone, setTimezone] = useState('UTC')
 
@@ -65,6 +66,8 @@ export default function SettingsPage() {
       setTimezone(m.timezone || 'UTC')
       setXrplAddress(m.xrplAddress || '')
       setSessionPref(m.sessionPreference || '30d')
+      const savedAvatar = localStorage.getItem('netten_avatar')
+      if (savedAvatar) setAvatar(savedAvatar)
     }).catch(() => { window.location.href = '/auth/login' })
   }, [])
 
@@ -106,6 +109,53 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-white font-semibold text-2xl">Settings</h1>
         <p className="text-gray-400 text-sm mt-0.5">Manage your Netten account</p>
+      </div>
+
+      {/* Profile Avatar */}
+      <div className="card space-y-4">
+        <h2 className="text-white font-semibold">Profile</h2>
+        <div className="flex items-center gap-5">
+          <div className="relative shrink-0">
+            <div className="w-20 h-20 rounded-2xl bg-brand/20 border-2 border-brand/30 flex items-center justify-center overflow-hidden">
+              {avatar
+                ? <img src={avatar} alt="logo" className="w-full h-full object-cover" />
+                : <span className="text-brand-light font-bold text-2xl uppercase">{businessName?.[0] || merchant?.email?.[0] || 'N'}</span>
+              }
+            </div>
+            {avatar && (
+              <button
+                onClick={() => { setAvatar(null); localStorage.removeItem('netten_avatar') }}
+                className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-600 transition-colors"
+                title="Remove photo"
+              >×</button>
+            )}
+          </div>
+          <div className="flex-1">
+            <p className="text-white text-sm font-medium mb-1">{businessName || 'Your Business'}</p>
+            <p className="text-gray-400 text-xs mb-3">Upload your logo or profile photo. Shown on your dashboard and pay pages.</p>
+            <label className="btn-secondary text-xs cursor-pointer inline-block">
+              {avatar ? 'Change photo' : 'Upload photo'}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  if (file.size > 2 * 1024 * 1024) { alert('Image must be under 2MB'); return }
+                  const reader = new FileReader()
+                  reader.onload = () => {
+                    const result = reader.result as string
+                    setAvatar(result)
+                    localStorage.setItem('netten_avatar', result)
+                  }
+                  reader.readAsDataURL(file)
+                }}
+              />
+            </label>
+            <p className="text-gray-600 text-xs mt-1.5">JPG, PNG or GIF · Max 2MB</p>
+          </div>
+        </div>
       </div>
 
       {/* Business Profile */}
