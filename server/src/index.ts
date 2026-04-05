@@ -25,6 +25,7 @@ import { subscriptionRoutes } from './routes/subscriptions'
 import { offrampRoutes }      from './routes/offramp'
 import { onrampRoutes }       from './routes/onramp'
 import { xamanRoutes }        from './routes/xaman'
+import securityPlugin from './middleware/security'
 
 const app = Fastify({ logger: process.env.NODE_ENV !== 'production' })
 
@@ -46,6 +47,8 @@ async function start() {
   await app.register(jwt, {
     secret: process.env.JWT_SECRET!,
   })
+
+  await app.register(securityPlugin)
 
   await app.register(rateLimit, {
     max: 100,
