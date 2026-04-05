@@ -23,6 +23,7 @@ import {
 import { sweepFeesToRewardsPool } from './jobs/rewardsSweep'
 import { subscriptionRoutes } from './routes/subscriptions'
 import { offrampRoutes }      from './routes/offramp'
+import { onrampRoutes }       from './routes/onramp'
 import { xamanRoutes }        from './routes/xaman'
 
 const app = Fastify({ logger: process.env.NODE_ENV !== 'production' })
@@ -65,6 +66,7 @@ async function start() {
   await app.register(transactionRoutes, { prefix: '/api/v1/transactions' })
   await app.register(invoiceRoutes,     { prefix: '/api/v1/invoices' })
   await app.register(linkRoutes,        { prefix: '/api/v1/payment-links' })
+  await app.register(onrampRoutes,      { prefix: '/api/v1/payment-links' })
   await app.register(rewardRoutes,      { prefix: '/api/v1/rewards' })
   await app.register(waitlistRoutes, { prefix: '/api/v1' })
   await app.register(subscriptionRoutes, { prefix: '/api/v1/subscriptions' })

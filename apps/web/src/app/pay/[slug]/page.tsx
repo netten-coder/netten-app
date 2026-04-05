@@ -32,6 +32,7 @@ export default function PayPage() {
   const [txn, setTxn] = useState<any>(null)
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
+  const [loadingMoonpay, setLoadingMoonpay] = useState(false)
 
   useEffect(() => {
     if (!slug) return
@@ -78,6 +79,24 @@ export default function PayPage() {
     navigator.clipboard.writeText(txn.payAddress)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  async function payWithCard() {
+    if (!link.amountUsd && !amount) return
+    setLoadingMoonpay(true)
+    try {
+      const res = await fetch(`${API_URL}/api/v1/payment-links/moonpay-onramp/${slug}?amount=${totalAmount}`)
+      const data = await res.json()
+      if (data.url) {
+        window.open(data.url, '_blank', 'width=480,height=700,left=200,top=100')
+      } else {
+        setError(data.error || 'Failed to open card payment')
+      }
+    } catch {
+      setError('Failed to connect to card payment provider')
+    } finally {
+      setLoadingMoonpay(false)
+    }
   }
 
   // ── Merchant avatar initials ──────────────────────────────────────────────
@@ -189,6 +208,29 @@ export default function PayPage() {
             <button onClick={initiate} disabled={!selectedCoin || (!link.amountUsd && !amount)}
               className="btn-primary w-full mt-4 py-3 text-base">
               Continue →
+            </button>
+
+            {/* MoonPay card payment divider */}
+            <div className="flex items-center gap-3 my-2">
+              <div className="flex-1 h-px bg-surface-border" />
+              <span className="text-gray-600 text-xs">or</span>
+              <div className="flex-1 h-px bg-surface-border" />
+            </div>
+
+            <button
+              onClick={payWithCard}
+              disabled={loadingMoonpay || (!link.amountUsd && !amount)}
+              className="w-full flex items-center justify-center gap-3 p-4 rounded-2xl border-2 border-surface-border bg-surface-card hover:border-blue-500/40 hover:bg-blue-500/5 transition-all duration-150 disabled:opacity-40"
+            >
+              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+              </div>
+              <div className="text-left flex-1">
+                <p className="text-white font-medium text-sm">{loadingMoonpay ? 'Opening…' : 'Pay with card'}</p>
+                <p className="text-gray-500 text-xs">Visa · Mastercard · Apple Pay via MoonPay</p>
+              </div>
             </button>
           </div>
         )}
