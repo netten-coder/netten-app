@@ -171,6 +171,8 @@ export default function WaitlistPage() {
         .copy-btn:hover{background:rgba(124,255,107,.1);}
         .ref-note{font-size:14px;color:rgba(255,255,255,.45);line-height:1.6;}
         .ref-note strong{color:var(--e);}
+        .referral-callout{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(124,255,107,.12),rgba(124,255,107,.05));border:1px solid rgba(124,255,107,.3);border-radius:12px;padding:14px 18px;margin-top:16px;font-size:14px;}
+        .ref-gift{font-size:20px;}
         .net-ten{background:rgba(124,255,107,.04);border:1px solid rgba(124,255,107,.2);border-radius:20px;padding:28px;margin-bottom:24px;}
         .nt-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,255,107,.12);border:1px solid rgba(124,255,107,.3);color:var(--e);padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
         .nt-title{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:white;margin-bottom:8px;}
@@ -244,6 +246,55 @@ export default function WaitlistPage() {
           1% flat fee. Non-custodial. Your money, your wallet — always.
         </p>
 
+
+        {/* Form / Success */}
+        {!submitted ? (
+          <div className="card">
+            <div className="card-title">Secure Your Founding Spot</div>
+            <div className="card-sub">
+              Founding members lock in <strong style={{color:'white'}}>$44/mo forever</strong> — $15 less than the public price. 3 months free at launch. 777 spots total.
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="inputs">
+                <input type="email" placeholder="your@email.com" value={email} onChange={e=>setEmail(e.target.value)} required/>
+                <input type="text" placeholder="Referral code (optional)" value={referralCode} onChange={e=>setReferralCode(e.target.value)}/>
+              </div>
+              {error && <div className="err">{error}</div>}
+              <button type="submit" className="btn" disabled={loading}>
+                {loading ? 'Securing your spot...' : `Claim Founding Spot →`}
+              </button>
+            <div className="referral-callout">
+              <span className="ref-gift">🎁</span>
+              <span>
+                <strong>Refer a friend:</strong> You BOTH get{' '}
+                <span style={{color:'var(--e)',fontWeight:700}}>$10 RLUSD</span>{' '}
+                when they start using Netten
+              </span>
+            </div>
+            </form>
+          </div>
+        ) : (
+          <div className="success">
+            <div className="s-icon">✓</div>
+            {memberNumber && <div className="s-member">Founding Member #{memberNumber} of 777</div>}
+            <div className="s-title">You're in!</div>
+            <p className="s-sub">Welcome to the founding class of Netten.</p>
+            <div className="s-perks">
+              <div className="s-perk"><span className="s-perk-check">✓</span>$44/mo locked forever — never increases</div>
+              <div className="s-perk"><span className="s-perk-check">✓</span>3 months free when we launch</div>
+              <div className="s-perk"><span className="s-perk-check">✓</span>Net Ten rewards active from day one</div>
+              <div className="s-perk"><span className="s-perk-check">✓</span>Direct line to the founding team</div>
+            </div>
+            <div className="ref-box">
+              <div className="ref-label">Your Referral Link</div>
+              <div className="ref-url">{typeof window!=='undefined'?`${window.location.origin}?ref=${myReferralCode}`:`netten.app?ref=${myReferralCode}`}</div>
+              <button className="copy-btn" onClick={copyReferral}>{copied?'✓ Copied!':'Copy Referral Link'}</button>
+            </div>
+            <p className="ref-note"><strong>Every founding member you refer earns you 1 extra month free.</strong><br/>Share while the excitement is fresh — 777 spots total.</p>
+          </div>
+        )}
+
+
         {/* Pain stats */}
         <div className="pain-stats">
           <div className="pain-stat">
@@ -300,45 +351,6 @@ export default function WaitlistPage() {
             <span className="spots">{spots} spots remaining</span>
           </div>
         </div>
-
-        {/* Form / Success */}
-        {!submitted ? (
-          <div className="card">
-            <div className="card-title">Secure Your Founding Spot</div>
-            <div className="card-sub">
-              Founding members lock in <strong style={{color:'white'}}>$44/mo forever</strong> — $15 less than the public price. 3 months free at launch. 777 spots total.
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div className="inputs">
-                <input type="email" placeholder="your@email.com" value={email} onChange={e=>setEmail(e.target.value)} required/>
-                <input type="text" placeholder="Referral code (optional)" value={referralCode} onChange={e=>setReferralCode(e.target.value)}/>
-              </div>
-              {error && <div className="err">{error}</div>}
-              <button type="submit" className="btn" disabled={loading}>
-                {loading ? 'Securing your spot...' : `Claim Founding Spot →`}
-              </button>
-            </form>
-          </div>
-        ) : (
-          <div className="success">
-            <div className="s-icon">✓</div>
-            {memberNumber && <div className="s-member">Founding Member #{memberNumber} of 777</div>}
-            <div className="s-title">You're in!</div>
-            <p className="s-sub">Welcome to the founding class of Netten.</p>
-            <div className="s-perks">
-              <div className="s-perk"><span className="s-perk-check">✓</span>$44/mo locked forever — never increases</div>
-              <div className="s-perk"><span className="s-perk-check">✓</span>3 months free when we launch</div>
-              <div className="s-perk"><span className="s-perk-check">✓</span>Net Ten rewards active from day one</div>
-              <div className="s-perk"><span className="s-perk-check">✓</span>Direct line to the founding team</div>
-            </div>
-            <div className="ref-box">
-              <div className="ref-label">Your Referral Link</div>
-              <div className="ref-url">{typeof window!=='undefined'?`${window.location.origin}?ref=${myReferralCode}`:`netten.app?ref=${myReferralCode}`}</div>
-              <button className="copy-btn" onClick={copyReferral}>{copied?'✓ Copied!':'Copy Referral Link'}</button>
-            </div>
-            <p className="ref-note"><strong>Every founding member you refer earns you 1 extra month free.</strong><br/>Share while the excitement is fresh — 777 spots total.</p>
-          </div>
-        )}
 
         {/* Social proof */}
         <div className="social-proof">
