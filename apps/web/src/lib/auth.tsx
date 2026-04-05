@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 interface Merchant {
   id: string; email: string; businessName?: string; country?: string
   timezone: string; xrplAddress?: string; isVerified: boolean
-  plan: string; rewardBalance: number; totalRewardsEarned: number
+  plan: string; rewardBalance: number; totalRewardsEarned: number; createdAt: string
 }
 interface AuthContextType {
   merchant: Merchant | null; loading: boolean
