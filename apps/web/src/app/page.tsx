@@ -191,7 +191,7 @@ export default function WaitlistPage() {
         .nt-tier.locked .nt-tier-amt{color:rgba(255,255,255,.2);}
         .social-proof{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px;align-items:center;}
         .sp-label{font-size:12px;color:rgba(255,255,255,.35);letter-spacing:1px;text-transform:uppercase;width:100%;margin-bottom:6px;}
-        .sp-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:7px 14px;font-size:13px;color:rgba(255,255,255,.55);}
+        .sp-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:7px 14px;font-size:13px;color:rgba(255,255,255,.55);text-decoration:none;transition:all .2s;cursor:pointer;}.sp-chip:hover{background:rgba(124,255,107,.08);border-color:rgba(124,255,107,.25);color:rgba(255,255,255,.8);transform:translateY(-1px);}
         .sp-dot{width:5px;height:5px;background:var(--e);border-radius:50%;}
         .moonpay-row{display:flex;align-items:center;gap:10px;background:rgba(100,150,255,.06);border:1px solid rgba(100,150,255,.15);border-radius:12px;padding:14px 16px;margin-bottom:24px;}
         .mp-icon{width:32px;height:32px;background:rgba(100,150,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
@@ -343,11 +343,12 @@ export default function WaitlistPage() {
         {/* Social proof */}
         <div className="social-proof">
           <div className="sp-label">Built for the XRPL ecosystem</div>
-          <div className="sp-chip"><div className="sp-dot"/>XRP Ledger</div>
-          <div className="sp-chip"><div className="sp-dot"/>RLUSD by Ripple</div>
-          <div className="sp-chip"><div className="sp-dot"/>Xaman Wallet</div>
-          <div className="sp-chip"><div className="sp-dot"/>MoonPay</div>
-          <div className="sp-chip"><div className="sp-dot"/>XRPL Developer Community</div>
+          <a href="https://xrpl.org" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>XRP Ledger</a>
+          <a href="https://ripple.com/solutions/crypto-liquidity/" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>RLUSD by Ripple</a>
+          <a href="https://xaman.app" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>Xaman Wallet</a>
+          <a href="https://www.moonpay.com" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>MoonPay</a>
+          <a href="https://xrplgrants.org" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>XRPL Grants</a>
+          <a href="https://discord.gg/sfX3ERAMjH" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>XRPL Discord</a>
         </div>
 
         <div className="divider"/>
