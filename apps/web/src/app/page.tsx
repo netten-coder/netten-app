@@ -114,13 +114,13 @@ export default function WaitlistPage() {
         @keyframes f2{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-30px)}}
         .scan{position:fixed;left:0;right:0;height:2px;background:linear-gradient(transparent,rgba(124,255,107,.05),transparent);animation:scan 8s linear infinite;pointer-events:none;z-index:0;}
         @keyframes scan{0%{transform:translateY(-100vh)}100%{transform:translateY(100vh)}}
-        .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:48px 48px 80px;}
+        .wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:40px 5% 80px;}
         nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:64px;}
         .logo{display:flex;align-items:center;gap:10px;font-family:'Orbitron',monospace;font-weight:900;font-size:20px;letter-spacing:3px;color:var(--e);}
         .logo-icon{width:36px;height:36px;border:2px solid var(--e);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(124,255,107,.3);}
-        .login-link{background:transparent;border:1px solid rgba(124,255,107,.3);color:var(--e);padding:8px 20px;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;text-decoration:none;}
+        .login-link{background:transparent;border:1px solid rgba(124,255,107,.3);color:var(--e);padding:10px 24px;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-size:14px;cursor:pointer;transition:all .2s;text-decoration:none;}
         .login-link:hover{background:rgba(124,255,107,.1);}
-        .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,255,107,.1);border:1px solid rgba(124,255,107,.3);color:var(--e);padding:6px 14px;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;}
+        .badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,255,107,.1);border:1px solid rgba(124,255,107,.3);color:var(--e);padding:8px 16px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;}
         .dot{width:6px;height:6px;background:var(--e);border-radius:50%;animation:pulse 2s ease-in-out infinite;}
         @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
         h1{font-family:'Orbitron',monospace;font-size:clamp(36px,5.5vw,64px);font-weight:900;line-height:1.08;margin-bottom:20px;letter-spacing:-1px;}
@@ -131,11 +131,11 @@ export default function WaitlistPage() {
         .pain-stat{background:rgba(255,100,100,.06);border:1px solid rgba(255,100,100,.15);border-radius:12px;padding:22px 18px;text-align:center;}
         .pain-num{font-family:'Orbitron',monospace;font-size:28px;font-weight:900;color:#ff7c7c;margin-bottom:6px;}
         .pain-label{font-size:11px;color:rgba(255,255,255,.45);line-height:1.4;}
-        .coins{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:40px;}
-        .cpill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:6px 12px 6px 6px;transition:all .2s;}
+        .coins{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px;}
+        .cpill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:7px 14px 7px 7px;transition:all .2s;}
         .cpill:hover{background:rgba(255,255,255,.08);transform:translateY(-1px);}
-        .cicon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
-        .csym{font-size:12px;font-weight:600;color:rgba(255,255,255,.7);font-family:'Orbitron',monospace;letter-spacing:.5px;}
+        .cicon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+        .csym{font-size:13px;font-weight:600;color:rgba(255,255,255,.75);font-family:'Orbitron',monospace;letter-spacing:.5px;}
         .prog-section{background:rgba(255,255,255,.03);border:1px solid rgba(124,255,107,.15);border-radius:16px;padding:24px;margin-bottom:32px;}
         .prog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
         .prog-label{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--l);}
