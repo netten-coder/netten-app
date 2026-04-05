@@ -18,6 +18,98 @@ const COINS = [
   { symbol: 'HBAR',  color: '#00B388', letter: 'H' },
 ]
 
+const PLANS = [
+  {
+    name: 'Founding',
+    price: '$44',
+    originalPrice: '$59',
+    tagline: 'Lock in $15/mo savings for life',
+    badge: '🔒 777 SPOTS',
+    featured: true,
+    features: [
+      'Unlimited pay links',
+      'Payment dashboard',
+      'Net Ten rewards',
+      '3 months free at launch',
+      'Early access to features',
+      'Founding member badge',
+    ],
+  },
+  {
+    name: 'Starter',
+    price: '$55',
+    tagline: 'For solo freelancers',
+    featured: false,
+    features: [
+      'Unlimited pay links',
+      'Payment dashboard',
+      'Net Ten rewards',
+      'Email support',
+    ],
+  },
+  {
+    name: 'Pro',
+    price: '$77',
+    tagline: 'For growing businesses',
+    featured: false,
+    features: [
+      'Everything in Starter',
+      'Professional invoicing',
+      'CSV exports',
+      'Basic analytics',
+      'Priority support',
+    ],
+  },
+  {
+    name: 'Business',
+    price: '$99',
+    tagline: 'For teams and agencies',
+    featured: false,
+    features: [
+      'Everything in Pro',
+      'Webhooks & API access',
+      'Team seats (up to 5)',
+      'Advanced analytics',
+      'TENNET lending (Month 10+)',
+    ],
+  },
+]
+
+const FAQS = [
+  {
+    q: 'What is RLUSD?',
+    a: 'RLUSD is a stablecoin issued by Ripple, pegged 1:1 to the US dollar. It runs on the XRP Ledger, which means near-instant settlements and minimal fees. You can convert RLUSD to your local currency through any crypto exchange that supports it.',
+  },
+  {
+    q: "How do my clients pay if they don't have crypto?",
+    a: "They don't need crypto. When your client clicks your pay link, they can pay with card or bank transfer through MoonPay. MoonPay handles the conversion — your client pays in their currency, you receive RLUSD.",
+  },
+  {
+    q: 'Is my money safe?',
+    a: "NETTEN is non-custodial. We never hold your funds. Payments settle directly to your XRPL wallet address. You control your private keys, which means you — and only you — control your money.",
+  },
+  {
+    q: 'What is Net Ten?',
+    a: "Net Ten is our rewards program. Every 10 transactions you process, we send RLUSD to your wallet. The amount increases the longer you're with NETTEN — starting at $0.25 per reward and scaling up to $2.00 per reward after 10 months.",
+  },
+  {
+    q: 'Why 1% when Stripe is 2.9%?',
+    a: "We're built on the XRP Ledger, where transaction costs are fractions of a cent. We pass those savings to you. 1% covers our infrastructure and lets us keep building. No conversion fees, no withdrawal fees, no surprises.",
+  },
+  {
+    q: 'What countries do you support?',
+    a: "All of them. If you have internet and an XRPL wallet, you can use NETTEN. We don't block countries, restrict industries, or freeze accounts.",
+  },
+  {
+    q: 'How do I get my money out?',
+    a: "Your RLUSD is in your wallet — you already have it. To convert to local currency, send your RLUSD to any exchange that supports it (Bitstamp, Uphold, etc.) and withdraw to your bank. We're also working on direct off-ramp integrations.",
+  },
+  {
+    q: 'What if I need help?',
+    a: "Email us at support@netten.app. Founding members get priority support. We're a small team and we actually read every message.",
+  },
+]
+
 export default function WaitlistPage() {
   const [email, setEmail]               = useState('')
   const [referralCode, setReferralCode] = useState('')
@@ -29,6 +121,7 @@ export default function WaitlistPage() {
   const [error, setError]               = useState('')
   const [copied, setCopied]             = useState(false)
   const [progressWidth, setProgressWidth] = useState('0.5%')
+  const [openFaq, setOpenFaq]           = useState<number | null>(null)
 
   useEffect(() => {
     fetch('/api/waitlist')
@@ -37,7 +130,6 @@ export default function WaitlistPage() {
         if (d.count) {
           setCount(d.count)
           localStorage.setItem('netten_waitlist_count', String(d.count))
-          // Fix: delay progress bar animation so DOM is painted first
           setTimeout(() => setProgressWidth(`${Math.max((d.count / GOAL) * 100, 0.5)}%`), 300)
         }
       })
@@ -208,13 +300,51 @@ export default function WaitlistPage() {
         .divider{height:1px;background:rgba(255,255,255,.06);margin:40px 0;}
         .how-it-works{margin-bottom:40px;}
         .section-label{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:20px;}
+        .section-title{font-family:'Orbitron',monospace;font-size:28px;font-weight:700;color:white;margin-bottom:8px;}
+        .section-sub{font-size:16px;color:rgba(255,255,255,.5);margin-bottom:28px;line-height:1.6;}
         .hiw-steps{display:grid;gap:12px;}
         .hiw-step{display:flex;align-items:flex-start;gap:16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:16px;}
         .hiw-num{width:28px;height:28px;border-radius:50%;background:rgba(124,255,107,.12);border:1px solid rgba(124,255,107,.3);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--e);flex-shrink:0;}
         .hiw-content h3{font-size:16px;font-weight:600;margin-bottom:4px;}
         .hiw-content p{font-size:14px;color:rgba(255,255,255,.45);line-height:1.6;}
+        
+        /* PRICING SECTION */
+        .pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+        @media(max-width:900px){.pricing-grid{grid-template-columns:repeat(2,1fr);}}
+        @media(max-width:540px){.pricing-grid{grid-template-columns:1fr;}}
+        .plan{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px;position:relative;transition:all .2s;}
+        .plan:hover{border-color:rgba(255,255,255,.15);transform:translateY(-2px);}
+        .plan.featured{background:rgba(124,255,107,.06);border:2px solid var(--e);box-shadow:0 0 40px rgba(124,255,107,.15);}
+        .plan-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--e);color:var(--d);font-size:10px;font-weight:700;padding:4px 12px;border-radius:100px;white-space:nowrap;letter-spacing:1px;}
+        .plan-name{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:white;margin-bottom:4px;}
+        .plan-tagline{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:16px;}
+        .plan-price{margin-bottom:20px;}
+        .plan-price-old{font-size:14px;color:rgba(255,255,255,.3);text-decoration:line-through;margin-right:8px;}
+        .plan-price-current{font-family:'Orbitron',monospace;font-size:32px;font-weight:900;color:var(--e);}
+        .plan-price-period{font-size:14px;color:rgba(255,255,255,.4);}
+        .plan-features{list-style:none;margin-bottom:20px;}
+        .plan-features li{font-size:13px;color:rgba(255,255,255,.55);padding:6px 0;display:flex;align-items:center;gap:8px;}
+        .plan-features li::before{content:'✓';color:var(--e);font-size:12px;}
+        .plan-btn{width:100%;background:transparent;border:1px solid rgba(124,255,107,.3);color:var(--e);border-radius:10px;padding:12px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+        .plan-btn:hover{background:rgba(124,255,107,.1);}
+        .plan.featured .plan-btn{background:var(--e);color:var(--d);border-color:var(--e);}
+        .plan.featured .plan-btn:hover{box-shadow:0 4px 20px rgba(124,255,107,.4);}
+        .pricing-note{text-align:center;margin-top:20px;font-size:13px;color:rgba(255,255,255,.4);}
+        .pricing-note strong{color:white;}
+        
+        /* FAQ SECTION */
+        .faq-list{display:flex;flex-direction:column;gap:8px;}
+        .faq-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;transition:all .2s;}
+        .faq-item.open{border-color:rgba(124,255,107,.25);background:rgba(124,255,107,.04);}
+        .faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;cursor:pointer;transition:all .2s;}
+        .faq-q:hover{background:rgba(255,255,255,.02);}
+        .faq-q-text{font-size:15px;font-weight:500;color:white;padding-right:16px;}
+        .faq-toggle{width:24px;height:24px;border-radius:50%;background:rgba(124,255,107,.1);border:1px solid rgba(124,255,107,.3);display:flex;align-items:center;justify-content:center;color:var(--e);font-size:18px;transition:all .2s;flex-shrink:0;}
+        .faq-item.open .faq-toggle{background:var(--e);color:var(--d);transform:rotate(45deg);}
+        .faq-a{padding:0 20px 18px;font-size:14px;color:rgba(255,255,255,.55);line-height:1.7;}
+        
         footer{text-align:center;padding-top:40px;border-top:1px solid rgba(255,255,255,.06);}
-        .footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;}
+        .footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;}
         .footer-links a{font-size:14px;color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s;}
         .footer-links a:hover{color:var(--e);}
         .footer-copy{font-size:13px;color:rgba(255,255,255,.25);}
@@ -370,7 +500,7 @@ export default function WaitlistPage() {
           <div className="nt-badge">⚡ Net Ten Effect</div>
           <div className="nt-title">Every 10 transactions. Automatic RLUSD.</div>
           <div className="nt-sub">
-            Net Ten is Netten's built-in merchant loyalty engine. Every 10 confirmed payments, RLUSD is deposited directly into your wallet — automatically, no claims required. Your rate grows as your business grows.
+            Net Ten is NETTEN's built-in merchant loyalty engine. Every 10 confirmed payments, RLUSD is deposited directly into your wallet — automatically, no claims required. Your rate grows as your business grows.
           </div>
           <div className="nt-dots">
             {[1,2,3,4,5,6,7,8,9].map(n => (
@@ -382,7 +512,7 @@ export default function WaitlistPage() {
           <div className="nt-reward">
             <div>
               <div className="nt-reward-label">Reward at milestone 10</div>
-              <div style={{fontSize:'11px',color:'rgba(255,255,255,.3)',marginTop:'2px'}}>Grows with your tenure on Netten</div>
+              <div style={{fontSize:'11px',color:'rgba(255,255,255,.3)',marginTop:'2px'}}>Grows with your tenure on NETTEN</div>
             </div>
             <div className="nt-reward-amount">$0.25 RLUSD</div>
           </div>
@@ -462,15 +592,78 @@ export default function WaitlistPage() {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="divider"/>
+
+        {/* ========== NEW: PRICING SECTION ========== */}
+        <div className="pricing-section">
+          <div className="section-label">Pricing</div>
+          <div className="section-title">Simple pricing. No surprises.</div>
+          <div className="section-sub">All plans include Net Ten rewards, unlimited pay links, and our 1% flat transaction fee.</div>
+          
+          <div className="pricing-grid">
+            {PLANS.map((plan) => (
+              <div key={plan.name} className={`plan ${plan.featured ? 'featured' : ''}`}>
+                {plan.badge && <div className="plan-badge">{plan.badge}</div>}
+                <div className="plan-name">{plan.name}</div>
+                <div className="plan-tagline">{plan.tagline}</div>
+                <div className="plan-price">
+                  {plan.originalPrice && <span className="plan-price-old">{plan.originalPrice}</span>}
+                  <span className="plan-price-current">{plan.price}</span>
+                  <span className="plan-price-period">/mo</span>
+                </div>
+                <ul className="plan-features">
+                  {plan.features.map((f, i) => (
+                    <li key={i}>{f}</li>
+                  ))}
+                </ul>
+                <button className="plan-btn">
+                  {plan.featured ? 'Claim founding spot →' : 'Get started →'}
+                </button>
+              </div>
+            ))}
+          </div>
+          
+          <div className="pricing-note">
+            All plans: <strong>1% flat transaction fee</strong>. No hidden charges. No currency conversion fees.
+          </div>
+        </div>
+
+        <div className="divider"/>
+
+        {/* ========== NEW: FAQ SECTION ========== */}
+        <div className="faq-section">
+          <div className="section-label">FAQ</div>
+          <div className="section-title">Questions? We've got answers.</div>
+          <div className="section-sub">Everything you need to know about getting paid with NETTEN.</div>
+          
+          <div className="faq-list">
+            {FAQS.map((faq, index) => (
+              <div key={index} className={`faq-item ${openFaq === index ? 'open' : ''}`}>
+                <div className="faq-q" onClick={() => setOpenFaq(openFaq === index ? null : index)}>
+                  <span className="faq-q-text">{faq.q}</span>
+                  <span className="faq-toggle">+</span>
+                </div>
+                {openFaq === index && (
+                  <div className="faq-a">{faq.a}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="divider"/>
+
+        {/* Footer */}
         <footer>
           <div className="footer-links">
+            <a href="/about">About</a>
+            <a href="mailto:jermaine@netten.app">Contact</a>
+            <a href="https://twitter.com/jermaineulinwa" target="_blank" rel="noopener noreferrer">Twitter</a>
             <a href="/privacy">Privacy Policy</a>
             <a href="/terms">Terms of Service</a>
             <a href="/auth/login">Merchant Login</a>
           </div>
-          <div className="footer-copy">© 2026 Netten · Powered by XRP Ledger · netten.app</div>
+          <div className="footer-copy">© 2026 NETTEN · Powered by XRP Ledger · Made with 🪞 by Jermaine Ulinwa</div>
         </footer>
       </div>
     </>
