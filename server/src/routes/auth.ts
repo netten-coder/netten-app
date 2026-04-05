@@ -1,3 +1,4 @@
+import { emailRateLimitMiddleware } from '../middleware/emailRateLimit'
 // server/src/routes/auth.ts
 import { FastifyInstance } from 'fastify'
 import { db } from '../lib/db'
@@ -9,7 +10,7 @@ import { z } from 'zod'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function authRoutes(app: FastifyInstance) {
-  app.post('/login', async (req, reply) => {
+  app.post('/login', { preHandler: [emailRateLimitMiddleware] }, async (req, reply) => {
     const { email } = z.object({ email: z.string().email() }).parse(req.body)
     const onWaitlist = await (db as any).waitlistEntry.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } })
     const isFounder = ['netten.founders@gmail.com', 'headofsneakz@gmail.com'].includes(email.toLowerCase())
