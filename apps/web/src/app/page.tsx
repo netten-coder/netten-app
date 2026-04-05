@@ -114,7 +114,7 @@ export default function WaitlistPage() {
         @keyframes f2{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-30px)}}
         .scan{position:fixed;left:0;right:0;height:2px;background:linear-gradient(transparent,rgba(124,255,107,.05),transparent);animation:scan 8s linear infinite;pointer-events:none;z-index:0;}
         @keyframes scan{0%{transform:translateY(-100vh)}100%{transform:translateY(100vh)}}
-        .wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:48px 32px 80px;}
+        .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:48px 48px 80px;}
         nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:64px;}
         .logo{display:flex;align-items:center;gap:10px;font-family:'Orbitron',monospace;font-weight:900;font-size:20px;letter-spacing:3px;color:var(--e);}
         .logo-icon{width:36px;height:36px;border:2px solid var(--e);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(124,255,107,.3);}
