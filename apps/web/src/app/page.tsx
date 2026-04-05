@@ -237,7 +237,7 @@ export default function WaitlistPage() {
         <div className="badge"><div className="dot"/>Early Access — 777 Founding Spots</div>
 
         {/* Headline — pain first */}
-        <h1>PayPal blocks 60 countries.<br/>Stripe holds your money.<br/><span className="acc">Netten doesn't.</span></h1>
+        <h1>PayPal blocks 60 countries.<br/>Stripe holds your money.<br/><span className="acc">NETTEN doesn't.</span></h1>
 
         <p className="sub">
           Accept any crypto from any client, anywhere. Settle instantly in RLUSD on the XRP Ledger.
