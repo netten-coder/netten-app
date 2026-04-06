@@ -26,7 +26,7 @@ import { offrampRoutes }      from './routes/offramp'
 import { onrampRoutes }       from './routes/onramp'
 import { xamanRoutes }        from './routes/xaman'
 import securityPlugin from './middleware/security'
-// import { emailRoutes } from './routes/email-routes'
+import { emailRoutes } from './routes/email-routes'
 
 const app = Fastify({ logger: process.env.NODE_ENV !== 'production' })
 
@@ -73,6 +73,7 @@ async function start() {
   await app.register(onrampRoutes,      { prefix: '/api/v1/payment-links' })
   await app.register(rewardRoutes,      { prefix: '/api/v1/rewards' })
   await app.register(waitlistRoutes, { prefix: '/api/v1' })
+  await app.register(emailRoutes, { prefix: '/api/email' })
   await app.register(subscriptionRoutes, { prefix: '/api/v1/subscriptions' })
   await app.register(offrampRoutes,      { prefix: '/api/v1' })
   await app.register(xamanRoutes,        { prefix: '/api/v1/xaman' })
