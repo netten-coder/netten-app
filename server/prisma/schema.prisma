@@ -283,3 +283,37 @@ model WaitlistEntry {
   referredBy   String?
   createdAt    DateTime @default(now())
 }
+
+// ── Email Funnel Models ────────────────────────────────────────────────────
+
+model FoundingMember {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  spotNumber        Int       @unique
+  referralCode      String    @unique
+  referredBy        String?
+  emailSequenceStep Int       @default(0)
+  nextEmailDue      DateTime?
+  isActive          Boolean   @default(true)
+  convertedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  emailLogs         EmailLog[]
+}
+
+model EmailLog {
+  id              String   @id @default(cuid())
+  foundingMemberId String
+  foundingMember  FoundingMember @relation(fields: [foundingMemberId], references: [id])
+  emailType       String
+  resendId        String?
+  status          String   @default("sent")
+  openedAt        DateTime?
+  clickedAt       DateTime?
+  createdAt       DateTime @default(now())
+}
+
+model GlobalCounter {
+  id    String @id @default("founding_spots")
+  value Int    @default(0)
+}

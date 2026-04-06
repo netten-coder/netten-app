@@ -1,0 +1,4 @@
+cd ~/Desktop/netten/server
+npx prisma db pushcat > ~/Desktop/netten/server/.env << 'ENVFILE'
+DATABASE_URL="postgresql://neondb_owner:npg_dP4NkD5oKLaH@ep-divine-meadow-aml57rr9-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+ENVFILEccc
