@@ -40,7 +40,7 @@ function VerifyContent() {
           <div className="w-10 h-10 rounded-xl bg-brand flex items-center justify-center shadow-lg shadow-brand/30">
             <span className="text-white font-bold text-lg">N</span>
           </div>
-          <span className="text-white font-semibold text-xl tracking-tight">Netten</span>
+          <span className="text-white font-semibold text-xl tracking-tight">NETTEN</span>
         </div>
         <div className="card text-center py-8">
           {status === 'loading' && (

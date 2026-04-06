@@ -94,13 +94,13 @@ export default function AboutPage() {
             <div className="photo-glow"/>
             <img 
               src="/jermaine.jpg" 
-              alt="Jermaine Ulinwa, Founder of Netten" 
+              alt="Jermaine Ulinwa, Founder of NETTEN" 
               className="photo"
             />
           </div>
           <div className="intro">
             <h1>Hey, I'm <span>Jermaine</span></h1>
-            <div className="role">Founder & Builder @ Netten</div>
+            <div className="role">Founder & Builder @ NETTEN</div>
             <p className="tagline">
               I'm building the payment infrastructure I wish existed when I was a freelancer getting blocked, 
               held up, and charged 10% just to get paid.
@@ -127,7 +127,7 @@ export default function AboutPage() {
         {/* Story */}
         <div className="section">
           <div className="section-label">The Story</div>
-          <h2>Why I Built Netten</h2>
+          <h2>Why I Built NETTEN</h2>
           <p>
             I've been a freelancer, a consultant, and a builder working with clients across the world. 
             And I've experienced every pain point in global payments firsthand.
@@ -145,10 +145,10 @@ export default function AboutPage() {
             No one can freeze your funds because <strong>you control the wallet</strong>.
           </p>
           <p>
-            Netten is the product I wished existed — a payment platform for freelancers and creators who 
+            NETTEN is the product I wished existed — a payment platform for freelancers and creators who 
             work globally but keep getting blocked by systems built for a different era. If you've ever 
             lost a client because PayPal doesn't work in their country, or waited weeks for a wire to 
-            clear, or watched 10% of your invoice disappear into fees — <strong className="accent">Netten 
+            clear, or watched 10% of your invoice disappear into fees — <strong className="accent">NETTEN 
             is for you</strong>.
           </p>
         </div>
@@ -237,7 +237,7 @@ export default function AboutPage() {
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>
           </div>
-          <div className="footer-copy">© 2026 Netten · Built with 🪞 by Jermaine Ulinwa</div>
+          <div className="footer-copy">© 2026 NETTEN · Built with 🪞 by Jermaine Ulinwa</div>
         </footer>
       </div>
     </>

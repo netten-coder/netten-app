@@ -31,7 +31,7 @@ export default function LoginPage() {
           <div className="w-10 h-10 rounded-xl bg-brand flex items-center justify-center shadow-lg shadow-brand/30">
             <span className="text-white font-bold text-lg">N</span>
           </div>
-          <span className="text-white font-semibold text-xl tracking-tight">Netten</span>
+          <span className="text-white font-semibold text-xl tracking-tight">NETTEN</span>
         </div>
 
         <div className="card">
@@ -55,7 +55,7 @@ export default function LoginPage() {
             </div>
           ) : (
             <>
-              <h1 className="text-white font-semibold text-lg mb-1">Sign in to Netten</h1>
+              <h1 className="text-white font-semibold text-lg mb-1">Sign in to NETTEN</h1>
               <p className="text-gray-400 text-sm mb-5">Enter your email and we'll send a magic link.</p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -84,7 +84,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-xs text-gray-600 mt-6">
-          By signing in, you agree to Netten's Terms of Service
+          By signing in, you agree to NETTEN's Terms of Service
         </p>
       </div>
     </div>

@@ -280,7 +280,7 @@ export default function RewardsPage() {
                     <div className="bg-surface-card rounded-xl p-3 text-xs text-gray-400 space-y-1">
                       <p>✓ Powered by MoonPay — licensed global off-ramp</p>
                       <p>✓ 160+ countries · Visa · Mastercard · Bank transfer</p>
-                      <p>✓ KYC handled by MoonPay — not by Netten</p>
+                      <p>✓ KYC handled by MoonPay — not by NETTEN</p>
                     </div>
                     <div className="flex gap-3 pt-2">
                       <button type="button" onClick={() => setWithdrawMode('choose')} className="btn-secondary flex-1">Back</button>

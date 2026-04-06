@@ -85,7 +85,7 @@ export default function DashboardPage() {
           <h1 className="text-white font-semibold text-2xl">
             {d?.merchant?.businessName ? `Welcome back, ${d.merchant.businessName}` : 'Dashboard'}
           </h1>
-          <p className="text-gray-400 text-sm mt-0.5">Here's what's happening with Netten today.</p>
+          <p className="text-gray-400 text-sm mt-0.5">Here's what's happening with NETTEN today.</p>
         </div>
         <Link href="/dashboard/links" className="btn-primary text-sm">
           + New Pay Link

@@ -123,7 +123,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center shadow-md shadow-brand/30">
               <span className="text-white font-bold text-sm">N</span>
             </div>
-            <span className="text-white font-semibold text-base tracking-tight">Netten</span>
+            <span className="text-white font-semibold text-base tracking-tight">NETTEN</span>
           </div>
         </div>
 

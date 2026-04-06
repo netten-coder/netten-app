@@ -1,7 +1,7 @@
 /**
  * NETTEN DESIGN TOKENS
  * ─────────────────────────────────────────────────────────────
- * This is the single source of truth for Netten's visual identity.
+ * This is the single source of truth for NETTEN's visual identity.
  * A UI/UX designer can modify this file to restyle the entire
  * dashboard without touching any component logic.
  *

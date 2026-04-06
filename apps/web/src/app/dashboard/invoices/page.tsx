@@ -20,7 +20,7 @@ function InvoicePreview({ form, merchantName, invoiceNumber }: { form:InvoiceFor
           <div className="w-7 h-7 rounded-lg bg-brand flex items-center justify-center shrink-0">
             <span className="text-white font-bold text-xs">N</span>
           </div>
-          <span className="text-white font-semibold text-sm tracking-tight">Netten</span>
+          <span className="text-white font-semibold text-sm tracking-tight">NETTEN</span>
           <span className="ml-auto text-gray-400 text-xs font-mono">{invoiceNumber}</span>
         </div>
         <div className="px-5 py-4">

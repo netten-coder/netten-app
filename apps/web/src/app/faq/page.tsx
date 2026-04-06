@@ -16,19 +16,19 @@ const FAQ_DATA: FAQCategory[] = [
     label: 'Getting Started',
     items: [
       {
-        q: 'What is Netten?',
-        a: 'Netten is a non-custodial payment platform built on the XRP Ledger. It lets freelancers, creators, and businesses accept payment in any major cryptocurrency — or by credit card — and settle instantly in RLUSD (Ripple\'s regulated stablecoin). 1% flat fee. No holds. No frozen accounts.',
+        q: 'What is NETTEN?',
+        a: 'NETTEN is a non-custodial payment platform built on the XRP Ledger. It lets freelancers, creators, and businesses accept payment in any major cryptocurrency — or by credit card — and settle instantly in RLUSD (Ripple\'s regulated stablecoin). 1% flat fee. No holds. No frozen accounts.',
       },
       {
-        q: 'Who is Netten for?',
-        a: 'Netten is built for freelancers, digital creators, consultants, and small businesses who work with international clients. If you\'ve ever had PayPal freeze your account, Stripe hold your funds, or lost money to wire transfer fees, Netten was built for you.',
+        q: 'Who is NETTEN for?',
+        a: 'NETTEN is built for freelancers, digital creators, consultants, and small businesses who work with international clients. If you\'ve ever had PayPal freeze your account, Stripe hold your funds, or lost money to wire transfer fees, NETTEN was built for you.',
       },
       {
-        q: 'Do I need to know anything about crypto to use Netten?',
-        a: 'No. You\'ll need an XRPL wallet (we recommend Xaman — free and easy to set up), but you don\'t need to understand blockchain. Netten handles everything. Your clients don\'t need crypto at all — they can pay by credit card.',
+        q: 'Do I need to know anything about crypto to use NETTEN?',
+        a: 'No. You\'ll need an XRPL wallet (we recommend Xaman — free and easy to set up), but you don\'t need to understand blockchain. NETTEN handles everything. Your clients don\'t need crypto at all — they can pay by credit card.',
       },
       {
-        q: 'Is Netten live?',
+        q: 'Is NETTEN live?',
         a: 'The product is built and validated. We are in the founding member stage — accepting the first 777 members at a locked rate of $44/mo before opening to the public at $59/mo.',
       },
     ],
@@ -57,8 +57,8 @@ const FAQ_DATA: FAQCategory[] = [
         a: 'Yes. Via MoonPay integration, clients can pay with their Visa, Mastercard, or Apple Pay. The payment is converted and you receive RLUSD in your wallet within seconds.',
       },
       {
-        q: 'What countries does Netten support?',
-        a: '160+ countries via MoonPay. PayPal and Stripe block or restrict 60+ countries. Netten doesn\'t restrict any of them.',
+        q: 'What countries does NETTEN support?',
+        a: '160+ countries via MoonPay. PayPal and Stripe block or restrict 60+ countries. NETTEN doesn\'t restrict any of them.',
       },
     ],
   },
@@ -66,8 +66,8 @@ const FAQ_DATA: FAQCategory[] = [
     label: 'Security & Custody',
     items: [
       {
-        q: 'Does Netten hold my funds?',
-        a: 'Never. Netten is non-custodial — payments go directly from your client to your XRPL wallet. We are a payment rail, not a bank or escrow service. We have no ability to freeze, hold, or seize your funds.',
+        q: 'Does NETTEN hold my funds?',
+        a: 'Never. NETTEN is non-custodial — payments go directly from your client to your XRPL wallet. We are a payment rail, not a bank or escrow service. We have no ability to freeze, hold, or seize your funds.',
       },
       {
         q: 'What wallet do I need?',
@@ -75,11 +75,11 @@ const FAQ_DATA: FAQCategory[] = [
       },
       {
         q: 'Is my wallet information safe?',
-        a: 'Netten never has access to your private keys. Your wallet is controlled entirely by you. We only interact with your public wallet address to send payments and Net Ten rewards.',
+        a: 'NETTEN never has access to your private keys. Your wallet is controlled entirely by you. We only interact with your public wallet address to send payments and Net Ten rewards.',
       },
       {
-        q: 'Has Netten been security audited?',
-        a: 'Netten has rate limiting, transaction velocity protection, and security middleware deployed in production. A full third-party security audit is planned before the public launch.',
+        q: 'Has NETTEN been security audited?',
+        a: 'NETTEN has rate limiting, transaction velocity protection, and security middleware deployed in production. A full third-party security audit is planned before the public launch.',
       },
     ],
   },
@@ -88,11 +88,11 @@ const FAQ_DATA: FAQCategory[] = [
     items: [
       {
         q: 'What is Net Ten?',
-        a: 'Net Ten is Netten\'s built-in merchant loyalty engine. Every 10 confirmed payments you receive, RLUSD is automatically deposited into your wallet. No claims needed — it happens automatically.',
+        a: 'Net Ten is NETTEN\'s built-in merchant loyalty engine. Every 10 confirmed payments you receive, RLUSD is automatically deposited into your wallet. No claims needed — it happens automatically.',
       },
       {
         q: 'How much do I earn?',
-        a: 'Your reward rate grows as your business grows on Netten. Level 1 rewards are $0.25 RLUSD per milestone. Rates scale as you progress. Levels 3 and 4 are unlocked as you grow.',
+        a: 'Your reward rate grows as your business grows on NETTEN. Level 1 rewards are $0.25 RLUSD per milestone. Rates scale as you progress. Levels 3 and 4 are unlocked as you grow.',
       },
       {
         q: 'Do I need to do anything to receive Net Ten rewards?',
@@ -109,7 +109,7 @@ const FAQ_DATA: FAQCategory[] = [
     items: [
       {
         q: 'What is a founding member?',
-        a: 'Founding members are the first 777 people to join Netten. You lock in $44/mo for life — the public price is $59/mo. Founding members also receive 3 months free at launch and Net Ten rewards from day one.',
+        a: 'Founding members are the first 777 people to join NETTEN. You lock in $44/mo for life — the public price is $59/mo. Founding members also receive 3 months free at launch and Net Ten rewards from day one.',
       },
       {
         q: 'What happens after 777 spots are filled?',
@@ -121,7 +121,7 @@ const FAQ_DATA: FAQCategory[] = [
       },
       {
         q: 'What do I get for referring someone?',
-        a: 'You and the person you refer each earn $10 RLUSD when they process their first payment through Netten. Your referral link is in your confirmation email after joining.',
+        a: 'You and the person you refer each earn $10 RLUSD when they process their first payment through NETTEN. Your referral link is in your confirmation email after joining.',
       },
     ],
   },
@@ -150,7 +150,7 @@ const FAQ_DATA: FAQCategory[] = [
     label: 'Technical',
     items: [
       {
-        q: 'What blockchain does Netten use?',
+        q: 'What blockchain does NETTEN use?',
         a: 'The XRP Ledger (XRPL) — one of the fastest, lowest-cost, and most energy-efficient blockchains in the world.',
       },
       {
@@ -163,7 +163,7 @@ const FAQ_DATA: FAQCategory[] = [
       },
       {
         q: 'Do I need to install anything?',
-        a: 'No. Netten is web-based. The only thing you need outside of Netten is an XRPL wallet (we recommend Xaman, free on iOS and Android).',
+        a: 'No. NETTEN is web-based. The only thing you need outside of NETTEN is an XRPL wallet (we recommend Xaman, free on iOS and Android).',
       },
     ],
   },
@@ -289,7 +289,7 @@ export default function FAQPage() {
             <a href="/terms">Terms of Service</a>
             <a href="/auth/login">Merchant Login</a>
           </div>
-          <div className="footer-copy">© 2026 Netten · Powered by XRP Ledger · netten.app</div>
+          <div className="footer-copy">© 2026 NETTEN · Powered by XRP Ledger · netten.app</div>
         </footer>
       </div>
     </>

@@ -124,12 +124,12 @@ export default function PayPage() {
     <div className="min-h-screen bg-brand-dark flex flex-col items-center justify-start px-4 py-8 md:py-16">
       <div className="w-full max-w-sm">
 
-        {/* Netten header */}
+        {/* NETTEN header */}
         <div className="flex items-center gap-2.5 mb-6 justify-center">
           <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center shadow-md shadow-brand/30">
             <span className="text-white font-bold text-sm">N</span>
           </div>
-          <span className="text-white font-semibold tracking-tight">Netten</span>
+          <span className="text-white font-semibold tracking-tight">NETTEN</span>
         </div>
 
         {/* Merchant identity + amount */}
@@ -347,7 +347,7 @@ export default function PayPage() {
         )}
 
         {/* Powered by footer */}
-        <p className="text-gray-700 text-xs text-center mt-8">Powered by Netten · netten.app</p>
+        <p className="text-gray-700 text-xs text-center mt-8">Powered by NETTEN · netten.app</p>
 
       </div>
     </div>

@@ -108,7 +108,7 @@ export default function SettingsPage() {
     <div className="p-6 max-w-2xl mx-auto space-y-6">
       <div>
         <h1 className="text-white font-semibold text-2xl">Settings</h1>
-        <p className="text-gray-400 text-sm mt-0.5">Manage your Netten account</p>
+        <p className="text-gray-400 text-sm mt-0.5">Manage your NETTEN account</p>
       </div>
 
       {/* Profile Avatar */}

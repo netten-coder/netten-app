@@ -1,4 +1,4 @@
-// lib/api.ts — Netten API client
+// lib/api.ts — NETTEN API client
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 

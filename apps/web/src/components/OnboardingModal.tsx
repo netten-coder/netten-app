@@ -4,10 +4,10 @@ import { useRouter } from 'next/navigation'
 
 const STEPS = [
   { number:1, title:'Connect your XRPL wallet', description:"Go to Settings and paste your XRP Ledger wallet address. This is where all your RLUSD payments settle — instantly after every transaction.", action:'Go to Settings →', href:'/dashboard/settings', tip:"No wallet yet? Download Xaman (xaman.app) — it's free and takes 2 minutes." },
-  { number:2, title:'Create your first Pay Link', description:"Click Pay Links then + New Link. Enter a description and amount. Share the link with any client — they can pay in BTC, ETH, SOL, XRP, or RLUSD.", action:'Create a Pay Link →', href:'/dashboard/links', tip:'Your link works on any device. No Netten account needed for your client.' },
+  { number:2, title:'Create your first Pay Link', description:"Click Pay Links then + New Link. Enter a description and amount. Share the link with any client — they can pay in BTC, ETH, SOL, XRP, or RLUSD.", action:'Create a Pay Link →', href:'/dashboard/links', tip:'Your link works on any device. No NETTEN account needed for your client.' },
   { number:3, title:'Send a crypto invoice', description:"Go to Invoices and click + New Invoice. Fill in client details and watch the live preview update. Hit Create & Send to email your client with a Pay Now button.", action:'Create an Invoice →', href:'/dashboard/invoices', tip:'A dedicated pay link is auto-generated for every invoice. When paid, the invoice marks PAID automatically.' },
   { number:4, title:'Get paid in any crypto', description:"Your client opens the link, picks their crypto, scans the QR code, and sends. You receive the equivalent in RLUSD — the dollar-pegged stablecoin on the XRP Ledger.", tip:'Payments confirm in 3-5 seconds. No waiting, no banks, no borders.' },
-  { number:5, title:'Earn rewards automatically', description:"Every 10 transactions, Netten deposits RLUSD directly to your wallet. Rewards start at $0.25 and grow each quarter — up to $2.00 per milestone. Zero effort.", action:'View Rewards →', href:'/dashboard/rewards', tip:'Q1: $0.25 → Q2: $0.50 → Q3: $1.00 → Q4: $2.00 per milestone. It compounds automatically.' },
+  { number:5, title:'Earn rewards automatically', description:"Every 10 transactions, NETTEN deposits RLUSD directly to your wallet. Rewards start at $0.25 and grow each quarter — up to $2.00 per milestone. Zero effort.", action:'View Rewards →', href:'/dashboard/rewards', tip:'Q1: $0.25 → Q2: $0.50 → Q3: $1.00 → Q4: $2.00 per milestone. It compounds automatically.' },
 ]
 
 interface Props { onClose: () => void }
@@ -43,7 +43,7 @@ export default function OnboardingModal({ onClose }: Props) {
         <div className="flex items-center justify-between px-6 py-4 border-b border-surface-border">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-brand flex items-center justify-center"><span className="text-white font-bold text-xs">N</span></div>
-            <span className="text-white font-semibold text-sm">Welcome to Netten</span>
+            <span className="text-white font-semibold text-sm">Welcome to NETTEN</span>
           </div>
           <button onClick={handleClose} className="text-gray-500 hover:text-white transition-colors text-xs">Skip tour</button>
         </div>
@@ -63,7 +63,7 @@ export default function OnboardingModal({ onClose }: Props) {
           <div className="flex gap-3">
             {step > 0 && <button onClick={()=>setStep(s=>s-1)} className="btn-secondary px-4 py-2.5 text-sm">← Back</button>}
             {current.action && current.href && <button onClick={handleAction} className="btn-secondary px-4 py-2.5 text-sm flex-1">{current.action}</button>}
-            <button onClick={()=>{ if(isLast){handleClose()}else{setStep(s=>s+1)} }} className="btn-primary px-4 py-2.5 text-sm flex-1">{isLast?'🎉 Start using Netten':'Next →'}</button>
+            <button onClick={()=>{ if(isLast){handleClose()}else{setStep(s=>s+1)} }} className="btn-primary px-4 py-2.5 text-sm flex-1">{isLast?'🎉 Start using NETTEN':'Next →'}</button>
           </div>
         </div>
       </div>
