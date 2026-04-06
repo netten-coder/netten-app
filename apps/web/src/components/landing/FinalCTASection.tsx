@@ -85,7 +85,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="text-center">
           <p className="text-sm text-gray-600 mb-2">
-            © 2026 Netten. Built on the XRP Ledger.
+            © 2026 NETTEN. Built on the XRP Ledger.
           </p>
           <p className="text-sm text-gray-600">
             Made with <span className="text-[#B5FF4D]">🪞</span> by Jermaine Ulinwa

@@ -14,7 +14,7 @@ const faqs = [
   },
   {
     question: 'Is my money safe?',
-    answer: "Netten is non-custodial. We never hold your funds. Payments settle directly to your XRPL wallet address. You control your private keys, which means you — and only you — control your money.",
+    answer: "NETTEN is non-custodial. We never hold your funds. Payments settle directly to your XRPL wallet address. You control your private keys, which means you — and only you — control your money.",
   },
   {
     question: 'What is Net Ten?',
@@ -26,7 +26,7 @@ const faqs = [
   },
   {
     question: 'What countries do you support?',
-    answer: "All of them. If you have internet and an XRPL wallet, you can use Netten. We do not block countries, restrict industries, or freeze accounts.",
+    answer: "All of them. If you have internet and an XRPL wallet, you can use NETTEN. We do not block countries, restrict industries, or freeze accounts.",
   },
   {
     question: 'How do I get my money out?',

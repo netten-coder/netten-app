@@ -408,7 +408,7 @@ export default function WaitlistPage() {
             <div className="s-icon">✓</div>
             {memberNumber && <div className="s-member">Founding Member #{memberNumber} of 777</div>}
             <div className="s-title">You're in!</div>
-            <p className="s-sub">Welcome to the founding class of Netten.</p>
+            <p className="s-sub">Welcome to the founding class of NETTEN.</p>
             <div className="s-perks">
               <div className="s-perk"><span className="s-perk-check">✓</span>$44/mo locked forever — never increases</div>
               <div className="s-perk"><span className="s-perk-check">✓</span>3 months free when we launch</div>
