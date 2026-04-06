@@ -124,11 +124,11 @@ export default function WaitlistPage() {
   const [openFaq, setOpenFaq]           = useState<number | null>(null)
 
   useEffect(() => {
-    fetch('/api/waitlist')
+    fetch('https://netten-app-production.up.railway.app/api/email/waitlist/spots')
       .then(r => r.json())
       .then(d => {
-        if (d.count) {
-          setCount(d.count)
+        if (d.remaining !== undefined) {
+          setCount(d.total - d.remaining)
           localStorage.setItem('netten_waitlist_count', String(d.count))
           setTimeout(() => setProgressWidth(`${Math.max((d.count / GOAL) * 100, 0.5)}%`), 300)
         }
@@ -153,10 +153,10 @@ export default function WaitlistPage() {
     if (!email.includes('@')) { setError('Please enter a valid email'); return }
     setLoading(true); setError('')
     try {
-      const res = await fetch('/api/waitlist', {
+      const res = await fetch('https://netten-app-production.up.railway.app/api/email/waitlist/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, referralCode }),
+        body: JSON.stringify({ email, firstName: email.split('@')[0], referredBy: referralCode }),
       })
       const data = await res.json()
       if (data.success) {
