@@ -44,7 +44,7 @@ model Merchant {
   isVerified    Boolean @default(false)
   isActive      Boolean @default(true)
   plan          String  @default("FOUNDING")
-
+referralRewardPaid  Boolean   @default(false)
   rewardBalance       Float @default(0)
   totalRewardsEarned  Float @default(0)
   txnCountSinceReward Int   @default(0)
