@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ — NETTEN — Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap');
+:root{--e:#7CFF6B;--d:#041E17;--d2:#0A3D2E;--b:#1D9E75;--l:#9FE1CB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--d);color:white;font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden;}
+.gbg{position:fixed;inset:0;background-image:linear-gradient(rgba(29,158,117,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(29,158,117,.06) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
+.orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+.o1{width:600px;height:600px;background:radial-gradient(circle,rgba(124,255,107,.12) 0%,transparent 70%);top:-200px;right:-100px;animation:f1 8s ease-in-out infinite;}
+.o2{width:500px;height:500px;background:radial-gradient(circle,rgba(29,158,117,.15) 0%,transparent 70%);bottom:-100px;left:-100px;animation:f2 10s ease-in-out infinite;}
+@keyframes f1{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,40px)}}
+@keyframes f2{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-30px)}}
+.scan{position:fixed;left:0;right:0;height:2px;background:linear-gradient(transparent,rgba(124,255,107,.05),transparent);animation:scan 8s linear infinite;pointer-events:none;z-index:0;}
+@keyframes scan{0%{transform:translateY(-100vh)}100%{transform:translateY(100vh)}}
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:40px 5% 80px;}
+nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:64px;}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Orbitron',monospace;font-weight:900;font-size:20px;letter-spacing:3px;color:var(--e);text-decoration:none;}
+.logo-icon{width:36px;height:36px;border:2px solid var(--e);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(124,255,107,.3);}
+.login-link{background:transparent;border:1px solid rgba(124,255,107,.3);color:var(--e);padding:10px 24px;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-size:14px;cursor:pointer;transition:all .2s;text-decoration:none;}
+.login-link:hover{background:rgba(124,255,107,.1);}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,255,107,.1);border:1px solid rgba(124,255,107,.3);color:var(--e);padding:8px 16px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;}
+.dot{width:6px;height:6px;background:var(--e);border-radius:50%;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+h1{font-family:'Orbitron',monospace;font-size:clamp(36px,5.5vw,64px);font-weight:900;line-height:1.08;margin-bottom:20px;letter-spacing:-1px;}
+.sub{font-size:18px;color:var(--l);line-height:1.65;margin-bottom:48px;max-width:600px;}
+.sub a{color:var(--e);text-decoration:none;}
+.sub a:hover{text-decoration:underline;}
+.divider{height:1px;background:rgba(255,255,255,.06);margin:40px 0;}
+
+.faq-category{margin-bottom:40px;}
+.faq-category-label{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--l);margin-bottom:16px;font-weight:600;}
+.faq-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;margin-bottom:8px;overflow:hidden;transition:all .2s;}
+.faq-item.open{border-color:rgba(124,255,107,.2);background:rgba(124,255,107,.03);}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;cursor:pointer;gap:16px;transition:all .2s;}
+.faq-q:hover{background:rgba(255,255,255,.02);}
+.faq-q-text{font-size:16px;font-weight:500;line-height:1.4;}
+.faq-toggle{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px;color:rgba(255,255,255,.4);flex-shrink:0;transition:all .2s;font-family:'Space Grotesk',sans-serif;line-height:1;}
+.faq-item.open .faq-toggle{background:rgba(124,255,107,.15);border-color:rgba(124,255,107,.3);color:var(--e);transform:rotate(45deg);}
+.faq-a{padding:0 24px 20px;font-size:15px;color:rgba(255,255,255,.55);line-height:1.7;display:none;}
+.faq-item.open .faq-a{display:block;}
+
+.cta-section{background:rgba(124,255,107,.04);border:1px solid rgba(124,255,107,.2);border-radius:20px;padding:40px;text-align:center;margin-bottom:24px;}
+.cta-heading{font-family:'Orbitron',monospace;font-size:clamp(22px,3vw,36px);font-weight:900;margin-bottom:14px;}
+.cta-body{font-size:15px;color:rgba(255,255,255,.55);line-height:1.65;margin-bottom:24px;max-width:500px;margin-left:auto;margin-right:auto;}
+.btn{display:inline-block;background:var(--e);color:var(--d);border:none;border-radius:12px;padding:16px 32px;font-family:'Orbitron',monospace;font-size:14px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all .2s;text-transform:uppercase;text-decoration:none;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,255,107,.4);}
+
+footer{text-align:center;padding-top:40px;border-top:1px solid rgba(255,255,255,.06);}
+.footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;}
+.footer-links a{font-size:14px;color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--e);}
+.footer-copy{font-size:13px;color:rgba(255,255,255,.25);}
+</style>
+</head>
+<body>
+<div class="gbg"></div>
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+<div class="scan"></div>
+
+<div class="wrap">
+  <!-- Nav -->
+  <nav>
+    <a href="/" class="logo">
+      <div class="logo-icon"><span style="font-size:16px;font-weight:900">N</span></div>
+      NETTEN
+    </a>
+    <a href="#" class="login-link">Merchant Login</a>
+  </nav>
+
+  <!-- Hero -->
+  <div class="badge"><div class="dot"></div>FREQUENTLY ASKED QUESTIONS</div>
+  <h1>Everything you need to know.</h1>
+  <p class="sub">Can't find your answer? Email us at <a href="mailto:hello@netten.app">hello@netten.app</a></p>
+
+  <!-- Getting Started -->
+  <div class="faq-category">
+    <div class="faq-category-label">Getting Started</div>
+    <div class="faq-item open">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What is NETTEN?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">NETTEN is a non-custodial payment platform built on the XRP Ledger. It lets freelancers, creators, and businesses accept payment in any major cryptocurrency &mdash; or by credit card &mdash; and settle instantly in RLUSD (Ripple's regulated stablecoin). 1% flat fee. No holds. No frozen accounts.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Who is NETTEN for?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">NETTEN is built for freelancers, digital creators, consultants, and small businesses who work with international clients. If you've ever had PayPal freeze your account, Stripe hold your funds, or lost money to wire transfer fees, NETTEN was built for you.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Do I need to know anything about crypto to use NETTEN?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">No. You'll need an XRPL wallet (we recommend Xaman &mdash; free and easy to set up), but you don't need to understand blockchain. NETTEN handles everything. Your clients don't need crypto at all &mdash; they can pay by credit card.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Is NETTEN live?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">The product is built and validated. We are in the founding member stage &mdash; accepting the first 777 members at a locked rate of $44/mo before opening to the public at $59/mo.</div>
+    </div>
+  </div>
+
+  <!-- Payments & Settlement -->
+  <div class="faq-category">
+    <div class="faq-category-label">Payments &amp; Settlement</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What currencies can my clients pay in?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">BTC, ETH, XRP, SOL, RLUSD, DOGE, BNB, USDC, ADA, TRX, XLM, HBAR, and more. Clients who don't have crypto can pay by Visa, Mastercard, or Apple Pay via MoonPay &mdash; you still receive RLUSD instantly.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What do I actually receive?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">You receive RLUSD &mdash; Ripple's regulated stablecoin pegged 1:1 to the US dollar &mdash; directly into your XRPL wallet. No volatility. No conversion losses.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">How fast does settlement happen?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">3&ndash;5 seconds. The XRP Ledger settles around the clock &mdash; no banking hours, no batch processing, no next-day transfers.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What is the fee?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">1% flat fee on every transaction. No monthly minimums. No hidden charges. No currency conversion fees. Just 1%.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Can my clients pay without having crypto?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Yes. Via MoonPay integration, clients can pay with their Visa, Mastercard, or Apple Pay. The payment is converted and you receive RLUSD in your wallet within seconds.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What countries does NETTEN support?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">160+ countries via MoonPay. PayPal and Stripe block or restrict 60+ countries. NETTEN doesn't restrict any of them.</div>
+    </div>
+  </div>
+
+  <!-- Security & Custody -->
+  <div class="faq-category">
+    <div class="faq-category-label">Security &amp; Custody</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Does NETTEN hold my funds?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Never. NETTEN is non-custodial &mdash; payments go directly from your client to your XRPL wallet. We are a payment rail, not a bank or escrow service. We have no ability to freeze, hold, or seize your funds.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What wallet do I need?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">We recommend Xaman (formerly XUMM) &mdash; a free, non-custodial XRPL wallet available on iOS and Android. You can also use any XRPL-compatible wallet that supports RLUSD trust lines.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Is my wallet information safe?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">NETTEN never has access to your private keys. Your wallet is controlled entirely by you. We only interact with your public wallet address to send payments and Net Ten rewards.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Has NETTEN been security audited?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">NETTEN has rate limiting, transaction velocity protection, and security middleware deployed in production. A full third-party security audit is planned before the public launch.</div>
+    </div>
+  </div>
+
+  <!-- Net Ten Rewards -->
+  <div class="faq-category">
+    <div class="faq-category-label">Net Ten Rewards</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What is Net Ten?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Net Ten is NETTEN's built-in merchant loyalty engine. Every 10 confirmed payments you receive, RLUSD is automatically deposited into your wallet. No claims needed &mdash; it happens automatically.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">How much do I earn?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Your reward rate grows as your business grows on NETTEN. Level 1 rewards are $0.25 RLUSD per milestone. Rates scale as you progress. Levels 3 and 4 are unlocked as you grow.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Do I need to do anything to receive Net Ten rewards?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Nothing. The counter increments automatically with every confirmed payment. When you hit 10, the RLUSD is sent directly to your wallet. No claims, no dashboards, no effort.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Does paying my subscription count toward Net Ten?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Yes. Subscription payments made via your XRPL wallet count toward your Net Ten milestone.</div>
+    </div>
+  </div>
+
+  <!-- Founding Membership -->
+  <div class="faq-category">
+    <div class="faq-category-label">Founding Membership</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What is a founding member?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Founding members are the first 777 people to join NETTEN. You lock in $44/mo for life &mdash; the public price is $59/mo. Founding members also receive 3 months free at launch and Net Ten rewards from day one.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What happens after 777 spots are filled?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">The founding rate closes permanently. New members pay $59/mo. There is no way to unlock the founding rate after the 777 spots are gone.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Is my $44/mo rate guaranteed forever?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Yes. Your founding rate is locked permanently and will never increase &mdash; regardless of what the public pricing does in the future.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What do I get for referring someone?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">You and the person you refer each earn $10 RLUSD when they process their first payment through NETTEN. Your referral link is in your confirmation email after joining.</div>
+    </div>
+  </div>
+
+  <!-- Plans & Billing -->
+  <div class="faq-category">
+    <div class="faq-category-label">Plans &amp; Billing</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What are the subscription tiers?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Founding: $44/mo (locked for 777 members). Pro: $59/mo (public). Studio: $99/mo (teams, coming soon).</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Can I pay my subscription in RLUSD?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Yes &mdash; and we encourage it. Paying your subscription from your XRPL wallet counts toward your Net Ten milestone.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Can I pay by card?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Yes, via MoonPay.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Is there a free trial?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Founding members receive 3 months free at launch. There is no ongoing free tier.</div>
+    </div>
+  </div>
+
+  <!-- Technical -->
+  <div class="faq-category">
+    <div class="faq-category-label">Technical</div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What blockchain does NETTEN use?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">The XRP Ledger (XRPL) &mdash; one of the fastest, lowest-cost, and most energy-efficient blockchains in the world.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">What is RLUSD?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">RLUSD is a regulated stablecoin issued by Ripple, pegged 1:1 to the US dollar. It runs natively on the XRP Ledger and can be withdrawn to your bank account via MoonPay.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">How do I withdraw RLUSD to my bank account?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">Via MoonPay's off-ramp &mdash; you can convert your RLUSD to fiat and transfer it to your bank account. MoonPay supports most major countries.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggle(this)">
+        <span class="faq-q-text">Do I need to install anything?</span>
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-a">No. NETTEN is web-based. The only thing you need outside of NETTEN is an XRPL wallet (we recommend Xaman, free on iOS and Android).</div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-heading">Still have questions?</div>
+    <div class="cta-body">Email us at hello@netten.app &mdash; we respond within 24 hours.</div>
+    <a href="mailto:hello@netten.app" class="btn">Email Us &rarr;</a>
+  </div>
+
+  <!-- Footer -->
+  <div class="divider"></div>
+  <footer>
+    <div class="footer-links">
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Service</a>
+      <a href="#">Merchant Login</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 NETTEN &middot; Powered by XRP Ledger &middot; netten.app</div>
+  </footer>
+</div>
+
+<script>
+function toggle(el) {
+  const item = el.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

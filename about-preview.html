@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About NETTEN — Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap');
+:root{--e:#7CFF6B;--d:#041E17;--d2:#0A3D2E;--b:#1D9E75;--l:#9FE1CB;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--d);color:white;font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden;}
+.gbg{position:fixed;inset:0;background-image:linear-gradient(rgba(29,158,117,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(29,158,117,.06) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0;}
+.orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;}
+.o1{width:600px;height:600px;background:radial-gradient(circle,rgba(124,255,107,.12) 0%,transparent 70%);top:-200px;right:-100px;animation:f1 8s ease-in-out infinite;}
+.o2{width:500px;height:500px;background:radial-gradient(circle,rgba(29,158,117,.15) 0%,transparent 70%);bottom:-100px;left:-100px;animation:f2 10s ease-in-out infinite;}
+@keyframes f1{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,40px)}}
+@keyframes f2{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-30px)}}
+.wrap{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:40px 5% 80px;}
+nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:64px;}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Orbitron',monospace;font-weight:900;font-size:20px;letter-spacing:3px;color:var(--e);text-decoration:none;}
+.logo-icon{width:36px;height:36px;border:2px solid var(--e);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(124,255,107,.3);}
+.back-link{background:transparent;border:1px solid rgba(124,255,107,.3);color:var(--e);padding:10px 24px;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-size:14px;cursor:pointer;transition:all .2s;text-decoration:none;}
+.back-link:hover{background:rgba(124,255,107,.1);}
+
+.hero{display:grid;grid-template-columns:280px 1fr;gap:48px;margin-bottom:48px;align-items:start;}
+@media(max-width:700px){.hero{grid-template-columns:1fr;text-align:center;}}
+
+.photo-container{position:relative;}
+.photo{width:100%;aspect-ratio:1;object-fit:cover;border-radius:20px;border:2px solid rgba(124,255,107,.3);box-shadow:0 0 40px rgba(124,255,107,.15);filter:grayscale(100%);background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:80px;color:rgba(255,255,255,.15);}
+.photo-glow{position:absolute;inset:-2px;border-radius:22px;background:linear-gradient(135deg,rgba(124,255,107,.3),transparent 50%);z-index:-1;}
+
+.intro h1{font-family:'Orbitron',monospace;font-size:36px;font-weight:900;line-height:1.2;margin-bottom:12px;}
+.intro h1 span{color:var(--e);text-shadow:0 0 30px rgba(124,255,107,.4);}
+.intro .role{font-size:16px;color:var(--l);margin-bottom:20px;letter-spacing:1px;}
+.intro .tagline{font-size:18px;color:rgba(255,255,255,.7);line-height:1.7;}
+
+.socials{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;}
+@media(max-width:700px){.socials{justify-content:center;}}
+.social-link{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:10px 18px;font-size:14px;color:rgba(255,255,255,.6);text-decoration:none;transition:all .2s;}
+.social-link:hover{background:rgba(124,255,107,.08);border-color:rgba(124,255,107,.3);color:white;transform:translateY(-2px);}
+.social-icon{font-size:16px;}
+
+.divider{height:1px;background:rgba(255,255,255,.06);margin:48px 0;}
+
+.section{margin-bottom:48px;}
+.section-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:16px;}
+.section h2{font-family:'Orbitron',monospace;font-size:24px;font-weight:700;color:white;margin-bottom:16px;}
+.section p{font-size:16px;color:rgba(255,255,255,.6);line-height:1.8;margin-bottom:16px;}
+.section p strong{color:white;}
+.section p .accent{color:var(--e);}
+
+.values{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px;}
+@media(max-width:600px){.values{grid-template-columns:1fr;}}
+.value{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;text-align:center;}
+.value-icon{font-size:28px;margin-bottom:12px;}
+.value-title{font-size:15px;font-weight:600;margin-bottom:6px;}
+.value-desc{font-size:13px;color:rgba(255,255,255,.45);line-height:1.5;}
+
+.timeline{display:flex;flex-direction:column;gap:16px;}
+.timeline-item{display:flex;gap:16px;align-items:flex-start;}
+.timeline-dot{width:12px;height:12px;border-radius:50%;background:var(--e);margin-top:6px;flex-shrink:0;box-shadow:0 0 12px rgba(124,255,107,.5);}
+.timeline-content h3{font-size:15px;font-weight:600;margin-bottom:4px;}
+.timeline-content p{font-size:14px;color:rgba(255,255,255,.5);line-height:1.6;}
+
+.cta-box{background:rgba(124,255,107,.06);border:1px solid rgba(124,255,107,.25);border-radius:20px;padding:32px;text-align:center;margin-top:48px;}
+.cta-title{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:white;margin-bottom:8px;}
+.cta-sub{font-size:15px;color:rgba(255,255,255,.55);margin-bottom:20px;line-height:1.6;}
+.cta-btn{display:inline-block;background:var(--e);color:var(--d);border:none;border-radius:12px;padding:14px 32px;font-family:'Orbitron',monospace;font-size:14px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all .2s;text-transform:uppercase;text-decoration:none;}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,255,107,.4);}
+
+footer{text-align:center;padding-top:40px;border-top:1px solid rgba(255,255,255,.06);}
+.footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;}
+.footer-links a{font-size:14px;color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--e);}
+.footer-copy{font-size:13px;color:rgba(255,255,255,.25);}
+</style>
+</head>
+<body>
+<div class="gbg"></div>
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+
+<div class="wrap">
+  <!-- Nav -->
+  <nav>
+    <a href="/" class="logo">
+      <div class="logo-icon"><span style="font-size:16px;font-weight:900">N</span></div>
+      NETTEN
+    </a>
+    <a href="/" class="back-link">&larr; Back to Home</a>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="photo-container">
+      <div class="photo-glow"></div>
+      <div class="photo">J</div>
+    </div>
+    <div class="intro">
+      <h1>Hey, I'm <span>Jermaine</span></h1>
+      <div class="role">Founder & Builder @ NETTEN</div>
+      <p class="tagline">
+        I'm building the payment infrastructure I wish existed when I was a freelancer getting blocked,
+        held up, and charged 10% just to get paid.
+      </p>
+      <div class="socials">
+        <a href="#" class="social-link">
+          <span class="social-icon">&#120143;</span>
+          Twitter
+        </a>
+        <a href="#" class="social-link">
+          <span class="social-icon">&#9993;</span>
+          Email
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- The Problem -->
+  <div class="section">
+    <div class="section-label">THE PROBLEM</div>
+    <h2>The system wasn't built for us.</h2>
+    <p>
+      If you're a freelancer outside of the US or Western Europe, the global payment system actively works against you.
+      <strong>PayPal freezes accounts in 60+ countries</strong>. Stripe holds your money for up to 180 days.
+      Wire transfers cost 8&#8211;15% after conversion fees, intermediary banks, and delays.
+    </p>
+    <p>
+      I lived it. I watched talented people lose gigs &#8212; not because of their work, but because clients
+      couldn't figure out how to pay them. That's not a minor inconvenience. <strong>That's a broken system.</strong>
+    </p>
+  </div>
+
+  <!-- The Fix -->
+  <div class="section">
+    <div class="section-label">THE FIX</div>
+    <h2>NETTEN is the infrastructure layer.</h2>
+    <p>
+      NETTEN is a <span class="accent">non-custodial payment platform</span> built on the XRP Ledger.
+      Your clients pay in any crypto &#8212; or by credit card via MoonPay. You receive <strong>RLUSD</strong>
+      (Ripple's regulated stablecoin, pegged 1:1 to USD) directly into your XRPL wallet. Settlement takes 3&#8211;5 seconds.
+    </p>
+    <p>
+      <strong>1% flat fee. No holds. No frozen accounts. No intermediaries.</strong> We're a payment rail, not a bank.
+      We never touch your funds. Your keys. Your wallet. Always.
+    </p>
+  </div>
+
+  <!-- Values -->
+  <div class="section">
+    <div class="section-label">WHAT WE BELIEVE</div>
+    <div class="values">
+      <div class="value">
+        <div class="value-icon">&#128274;</div>
+        <div class="value-title">Non-Custodial First</div>
+        <div class="value-desc">Your money goes to YOUR wallet. We never hold, touch, or control your funds.</div>
+      </div>
+      <div class="value">
+        <div class="value-icon">&#127760;</div>
+        <div class="value-title">Global by Default</div>
+        <div class="value-desc">160+ countries. No restrictions. If you can work, you can get paid.</div>
+      </div>
+      <div class="value">
+        <div class="value-icon">&#9889;</div>
+        <div class="value-title">Speed is Respect</div>
+        <div class="value-desc">3&#8211;5 second settlement. Your time matters. Your money shouldn't be held hostage.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Journey -->
+  <div class="section">
+    <div class="section-label">THE JOURNEY</div>
+    <h2>How we got here.</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>The frustration</h3>
+          <p>Years of watching freelancers lose money to payment processors that weren't built for global workers.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>The discovery</h3>
+          <p>Found the XRP Ledger &#8212; 3&#8211;5 second settlement, fractions of a cent in fees, RLUSD stablecoin. The technology was there.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>The build</h3>
+          <p>Built NETTEN from scratch &#8212; non-custodial, 1% flat fee, with Net Ten rewards baked into the rails.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>Right now</h3>
+          <p>Accepting the first 777 founding members. Building in public. Shipping fast.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <div class="cta-title">Join the founding 777.</div>
+    <div class="cta-sub">$44/mo locked forever. 3 months free at launch. Net Ten rewards from day one.</div>
+    <a href="/" class="cta-btn">Secure Your Spot &rarr;</a>
+  </div>
+
+  <!-- Footer -->
+  <div class="divider"></div>
+  <footer>
+    <div class="footer-links">
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Service</a>
+      <a href="#">Merchant Login</a>
+    </div>
+    <div class="footer-copy">&copy; 2026 NETTEN &middot; Powered by XRP Ledger &middot; netten.app</div>
+  </footer>
+</div>
+</body>
+</html>
