@@ -48,7 +48,8 @@ referralRewardPaid  Boolean   @default(false)
   rewardBalance       Float @default(0)
   totalRewardsEarned  Float @default(0)
   txnCountSinceReward Int   @default(0)
-
+referralCode          String?   @unique
+referredBy            String?
   auditAddon      Boolean   @default(false)
   auditAddonSince DateTime?
   sessionPreference String  @default("7d")
