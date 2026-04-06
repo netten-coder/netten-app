@@ -190,7 +190,7 @@ export async function incrementNetTen(merchantId: string): Promise<void> {
     merchant.businessName ?? '',
     merchant.createdAt,
     count,
-    previousRate,
+    Number(previousRate),
   )
 
   // ── Milestone check — every 10th transaction ─────────────────────────────
