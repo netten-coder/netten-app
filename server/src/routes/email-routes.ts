@@ -9,7 +9,7 @@ import {
   getSpotsRemaining,
   processEmailQueue,
   handleEmailOpen 
-} from './email-scheduler';
+} from '../services/email-scheduler';
 
 export async function emailRoutes(fastify: FastifyInstance) {
   

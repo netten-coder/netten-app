@@ -5,7 +5,7 @@
 
 import { Resend } from 'resend';
 import { PrismaClient } from '@prisma/client';
-import { foundingMemberSequence } from './founding-member-sequence';
+import { foundingMemberSequence } from '../emails/founding-member-sequence';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const prisma = new PrismaClient();
