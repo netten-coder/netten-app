@@ -22,7 +22,7 @@ const PLANS = [
   {
     name: 'Founding',
     price: '$44',
-    originalPrice: '$59',
+    originalPrice: '$55',
     tagline: 'Lock in $15/mo savings for life',
     badge: '🔒 777 SPOTS',
     featured: true,
