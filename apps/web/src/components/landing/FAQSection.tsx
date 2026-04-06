@@ -9,8 +9,8 @@ const faqs = [
     answer: 'RLUSD is a stablecoin issued by Ripple, pegged 1:1 to the US dollar. It runs on the XRP Ledger, which means near-instant settlements and minimal fees. You can convert RLUSD to your local currency through any crypto exchange that supports it.',
   },
   {
-    question: "How do my clients pay if they don't have crypto?",
-    answer: "They don't need crypto. When your client clicks your pay link, they can pay with card or bank transfer through MoonPay. MoonPay handles the conversion — your client pays in their currency, you receive RLUSD.",
+    question: "How do my clients pay if they do not have crypto?",
+    answer: "They do not need crypto. When your client clicks your pay link, they can pay with card or bank transfer through MoonPay. MoonPay handles the conversion — your client pays in their currency, you receive RLUSD.",
   },
   {
     question: 'Is my money safe?',
@@ -22,15 +22,15 @@ const faqs = [
   },
   {
     question: 'Why 1% when Stripe is 2.9%?',
-    answer: "We're built on the XRP Ledger, where transaction costs are fractions of a cent. We pass those savings to you. 1% covers our infrastructure and lets us keep building. No conversion fees, no withdrawal fees, no surprises.",
+    answer: "We are built on the XRP Ledger, where transaction costs are fractions of a cent. We pass those savings to you. 1% covers our infrastructure and lets us keep building. No conversion fees, no withdrawal fees, no surprises.",
   },
   {
     question: 'What countries do you support?',
-    answer: "All of them. If you have internet and an XRPL wallet, you can use Netten. We don't block countries, restrict industries, or freeze accounts.",
+    answer: "All of them. If you have internet and an XRPL wallet, you can use Netten. We do not block countries, restrict industries, or freeze accounts.",
   },
   {
     question: 'How do I get my money out?',
-    answer: "Your RLUSD is in your wallet — you already have it. To convert to local currency, send your RLUSD to any exchange that supports it (Bitstamp, Uphold, etc.) and withdraw to your bank. We're also working on direct off-ramp integrations for 2025.",
+    answer: "Your RLUSD is in your wallet — you already have it. To convert to local currency, send your RLUSD to any exchange that supports it (Bitstamp, Uphold, etc.) and withdraw to your bank. We are also working on direct off-ramp integrations for 2025.",
   },
   {
     question: 'What if I need help?',
