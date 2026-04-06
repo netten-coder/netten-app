@@ -34,7 +34,7 @@ const faqs = [
   },
   {
     question: 'What if I need help?',
-    answer: 'Email us at support@netten.app. Founding members get priority support. We're a small team and we actually read every message.',
+    answer: 'Email us at support@netten.app. Founding members get priority support. We are a small team and we actually read every message.',
   },
 ]
 
