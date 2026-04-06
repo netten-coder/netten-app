@@ -16,7 +16,7 @@ const painPoints = [
   {
     icon: '📉',
     title: 'Death by a thousand cuts',
-    body: '2.9% + $0.30 per transaction. Currency conversion fees. Withdrawal fees. Wire transfer fees. By the time you're paid, 8-15% is gone.',
+    body: '2.9% + $0.30 per transaction. Currency conversion fees. Withdrawal fees. Wire transfer fees. By the time you are paid, 8-15% is gone.',
   },
 ]
 
