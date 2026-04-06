@@ -16,7 +16,7 @@ const features = [
   {
     icon: '🎯',
     title: 'Net Ten rewards',
-    body: 'Every 10 transactions, we pay you RLUSD. The more you use Netten, the more you earn back.',
+    body: 'Every 10 transactions, we pay you RLUSD. The more you use NETTEN, the more you earn back.',
   },
   {
     icon: '💎',
@@ -31,7 +31,7 @@ const features = [
   {
     icon: '🌍',
     title: 'Works everywhere',
-    body: 'No blocked countries. No restricted industries. If you have internet and a wallet, you can use Netten.',
+    body: 'No blocked countries. No restricted industries. If you have internet and a wallet, you can use NETTEN.',
   },
 ]
 
