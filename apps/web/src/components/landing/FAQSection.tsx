@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     question: 'What is Net Ten?',
-    answer: 'Net Ten is our rewards program. Every 10 transactions you process, we send RLUSD to your wallet. The amount increases the longer you're with us — starting at $0.25 per reward and scaling up to $2.00 per reward after 10 months.',
+    answer: 'Net Ten is our rewards program. Every 10 transactions you process, we send RLUSD to your wallet. The amount increases the longer you are with us — starting at $0.25 per reward and scaling up to $2.00 per reward after 10 months.',
   },
   {
     question: 'Why 1% when Stripe is 2.9%?',
