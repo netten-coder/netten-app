@@ -382,7 +382,7 @@ export default function WaitlistPage() {
           <div className="card">
             <div className="card-title">Secure Your Founding Spot</div>
             <div className="card-sub">
-              Founding members lock in <strong style={{color:'white'}}>$44/mo forever</strong> — $15 less than the public price. 3 months free at launch. 777 spots total.
+              Founding members lock in <strong style={{color:'white'}}>$44/mo forever</strong> — $11 less than the public price. 3 months free at launch. 777 spots total.
             </div>
             <form onSubmit={handleSubmit}>
               <div className="inputs">
@@ -398,7 +398,7 @@ export default function WaitlistPage() {
               <span>
                 <strong>Refer a friend:</strong> You BOTH get{' '}
                 <span style={{color:'var(--e)',fontWeight:700}}>$10 RLUSD</span>{' '}
-                when they start using Netten
+                when they start using NETTEN
               </span>
             </div>
             </form>
