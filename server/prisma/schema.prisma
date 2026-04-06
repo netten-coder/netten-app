@@ -37,6 +37,7 @@ enum AddOnType {
 model Merchant {
   id            String  @id @default(cuid())
   email         String  @unique
+  firstName         String
   businessName  String?
   country       String?
   timezone      String  @default("UTC")
@@ -270,6 +271,7 @@ model RefreshToken {
 model Waitlist {
   id            String   @id @default(cuid())
   email         String   @unique
+  firstName         String
   referralCode  String   @unique
   referredById  String?
   referralCount Int      @default(0)
@@ -279,6 +281,7 @@ model Waitlist {
 model WaitlistEntry {
   id           String   @id @default(cuid())
   email        String   @unique
+  firstName         String
   referralCode String   @unique
   referredBy   String?
   createdAt    DateTime @default(now())
@@ -289,6 +292,7 @@ model WaitlistEntry {
 model FoundingMember {
   id                String    @id @default(cuid())
   email             String    @unique
+  firstName         String
   spotNumber        Int       @unique
   referralCode      String    @unique
   referredBy        String?
