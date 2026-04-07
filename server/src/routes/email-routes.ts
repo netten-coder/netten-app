@@ -25,7 +25,7 @@ export async function emailRoutes(app: FastifyInstance): Promise<void> {
     return reply.send({ total: 777, remaining, claimed: 777 - remaining });
   });
 
-  app.post('/process-queue', async (request, reply) => {
+  app.post('/process-queue', { config: { rawBody: true } }, async (request, reply) => {
     const cronSecret = request.headers['x-cron-secret'];
     if (cronSecret !== process.env.CRON_SECRET) return reply.status(401).send({ error: 'Unauthorized' });
     const result = await processEmailQueue();
