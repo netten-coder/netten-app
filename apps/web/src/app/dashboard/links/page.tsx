@@ -1,16 +1,19 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { api } from '@/lib/api'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://netten.app'
 
 export default function LinksPage() {
+  const router = useRouter()
   const [links, setLinks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ description: '', amountUsd: '', maxUses: '', expiresAt: '' })
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState<string | null>(null)
 
   function load() {
     api.links.list()
@@ -43,14 +46,33 @@ export default function LinksPage() {
 
   async function deleteLink(id: string) {
     if (!confirm('Deactivate this pay link?')) return
-    await api.links.delete(id)
-    load()
+    setDeleting(id)
+    try {
+      await api.links.delete(id)
+      load()
+    } catch (err: any) {
+      console.error('Delete failed:', err)
+      alert(`Failed to delete: ${err.message || 'Unknown error'}`)
+    } finally {
+      setDeleting(null)
+    }
   }
 
   function copyLink(url: string, id: string) {
     navigator.clipboard.writeText(url)
     setCopied(id)
     setTimeout(() => setCopied(null), 2000)
+  }
+
+  // Preview in same page (not new tab)
+  function previewLink(slug: string) {
+    router.push(`/pay/${slug}`)
+  }
+
+  // Extract slug from URL
+  function getSlugFromUrl(url: string): string {
+    const parts = url.split('/pay/')
+    return parts[1] || ''
   }
 
   return (
@@ -93,7 +115,7 @@ export default function LinksPage() {
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setShowForm(false)} className="btn-secondary flex-1">Cancel</button>
-                <button type="submit" disabled={saving} className="btn-primary flex-1">{saving ? 'Creating…' : 'Create Link'}</button>
+                <button type="submit" disabled={saving} className="btn-primary flex-1">{saving ? 'Creating...' : 'Create Link'}</button>
               </div>
             </form>
           </div>
@@ -134,14 +156,26 @@ export default function LinksPage() {
                 >
                   {copied === link.id ? '✓ Copied' : 'Copy'}
                 </button>
-                <a href={link.url} target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs py-1.5 px-3">
+                {/* Preview in same page instead of new tab */}
+                <button 
+                  onClick={() => previewLink(getSlugFromUrl(link.url))}
+                  className="btn-secondary text-xs py-1.5 px-3"
+                >
                   Preview
-                </a>
+                </button>
                 {link.isActive && (
-                  <button onClick={() => deleteLink(link.id)} className="text-red-400 hover:text-red-300 transition-colors">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
+                  <button 
+                    onClick={() => deleteLink(link.id)} 
+                    disabled={deleting === link.id}
+                    className="text-red-400 hover:text-red-300 transition-colors disabled:opacity-50"
+                  >
+                    {deleting === link.id ? (
+                      <div className="w-4 h-4 rounded-full border-2 border-red-400 border-t-transparent animate-spin" />
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    )}
                   </button>
                 )}
               </div>
