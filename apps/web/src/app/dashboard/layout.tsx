@@ -92,6 +92,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname()
   const hasRewards = (merchant?.rewardBalance ?? 0) > 0
   const [showOnboarding, setShowOnboarding] = React.useState(false)
+  const [rewardsSeen, setRewardsSeen] = React.useState(true) // Default true to prevent flash
+
+  // Check if rewards have been seen
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const seen = localStorage.getItem('netten_rewards_seen')
+      setRewardsSeen(!!seen)
+    }
+  }, [])
+
+  // Mark rewards as seen when visiting the rewards page
+  React.useEffect(() => {
+    if (pathname === '/dashboard/rewards' && typeof window !== 'undefined') {
+      localStorage.setItem('netten_rewards_seen', 'true')
+      setRewardsSeen(true)
+    }
+  }, [pathname])
 
   React.useEffect(() => {
     if (merchant && typeof window !== 'undefined') {
@@ -112,6 +129,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     )
   }
 
+  // Handle rewards link click - mark as seen immediately
+  function handleRewardsClick() {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('netten_rewards_seen', 'true')
+      setRewardsSeen(true)
+    }
+  }
+
   return (
     <div className="flex min-h-screen">
       <style>{`@keyframes reward-pulse{0%,100%{box-shadow:0 0 6px rgba(29,158,117,0.5),0 0 14px rgba(29,158,117,0.2);}50%{box-shadow:0 0 14px rgba(29,158,117,0.9),0 0 28px rgba(29,158,117,0.4);}}.reward-glow{animation:reward-pulse 2s ease-in-out infinite;border:1px solid rgba(29,158,117,0.5);}`}</style>
@@ -130,13 +155,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Nav */}
         <nav className="flex-1 py-4 px-3 space-y-0.5 overflow-y-auto">
           {NAV.map(item => {
-            const isActive  = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
-            const isRewards  = item.label === 'Rewards'
-            const glowClass  = isRewards && hasRewards && pathname !== '/dashboard/rewards' ? 'reward-glow' : ''
+            const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+            const isRewards = item.label === 'Rewards'
+            // Only glow if: has rewards, hasn't seen rewards page yet, and not currently on rewards page
+            const glowClass = isRewards && hasRewards && !rewardsSeen && pathname !== '/dashboard/rewards' ? 'reward-glow' : ''
+            
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={isRewards ? handleRewardsClick : undefined}
                 className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-100 ${glowClass} ${
                   isActive
                     ? 'bg-brand/20 text-brand-light'
