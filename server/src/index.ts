@@ -33,6 +33,16 @@ import { transakWebhookRoutes } from './routes/transak.webhook'
 const app = Fastify({ logger: process.env.NODE_ENV !== 'production' })
 
 async function start() {
+  // Validate required env vars
+  const required = ['JWT_SECRET', 'MAGIC_LINK_SECRET'];
+  const missing = required.filter(v => !process.env[v]);
+  if (missing.length > 0) {
+    console.error('[FATAL] Missing required env vars:', missing.join(', '));
+    console.error('[FATAL] Available env vars:', Object.keys(process.env).filter(k => k.includes('JWT') || k.includes('SECRET') || k.includes('MAGIC')).join(', '));
+    process.exit(1);
+  }
+  console.log('[NETTEN] Env vars validated, starting server...');
+
   await app.register(cors, {
     origin: [
       process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
