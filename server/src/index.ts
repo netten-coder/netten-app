@@ -22,6 +22,7 @@ import {
   suspendAbandonedAccounts,
 } from './jobs/subscriptionRenewal'
 import { sweepFeesToRewardsPool } from './jobs/rewardsSweep'
+import { runYieldDeposit }       from './jobs/yieldDeposit'
 import { subscriptionRoutes } from './routes/subscriptions'
 import { offrampRoutes }      from './routes/offramp'
 import { onrampRoutes }       from './routes/onramp'
@@ -125,6 +126,13 @@ async function start() {
     } catch (err) { console.error('[cron] Account health check failed:', err) }
   })
 
+  // Every Monday at 01:00 UTC — deploy idle RLUSD to AMM + treasury sweeps
+  cron.schedule('0 1 * * 1', async () => {
+    console.log('[cron] Running yield deposit + treasury sweep...')
+    try { await runYieldDeposit() }
+    catch (err) { console.error('[cron] Yield deposit failed:', err) }
+  })
+
   // Every Sunday at midnight UTC — sweep fee revenue into rewards pool
   cron.schedule('0 0 * * 0', async () => {
     console.log('[cron] Running weekly rewards pool sweep...')
@@ -132,7 +140,7 @@ async function start() {
     catch (err) { console.error('[cron] Rewards sweep failed:', err) }
   })
 
-  console.log('✓ Subscription cron jobs scheduled (renewal: 1st/month, health: daily, sweep: weekly)')
+  console.log('✓ Cron jobs scheduled (renewal: 1st/month, health: daily, sweep: Sunday, yield: Monday)')
 }
 
 start().catch(err => {
