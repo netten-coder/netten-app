@@ -19,7 +19,7 @@ import xrpl, {
   TrustSet, 
   OfferCreate,
   TransactionMetadata,
-  dropsToXrp,
+  
   xrpToDrops
 } from 'xrpl';
 
@@ -186,7 +186,7 @@ export class XrplDexService {
         ? bestOffer.TakerGets.value 
         : '0'
     );
-    const xrpAmount = parseFloat(dropsToXrp(bestOffer.TakerPays as string));
+    const dropsVal = typeof bestOffer.TakerPays === 'string' ? parseFloat(bestOffer.TakerPays) : 0; const xrpAmount = dropsVal / 1000000;
     
     const rate = rlusdAmount / xrpAmount;
     console.log(`📊 Current rate: 1 XRP = ${rate.toFixed(4)} RLUSD`);
@@ -459,7 +459,7 @@ export class XrplDexService {
         transaction.Destination === PLATFORM_WALLET_ADDRESS &&
         typeof transaction.Amount === 'string' // XRP is a string in drops
       ) {
-        const xrpAmount = dropsToXrp(transaction.Amount);
+        const xrpAmount = String(parseFloat(transaction.Amount) / 1000000);
         const txHash = transaction.hash;
         const destinationTag = transaction.DestinationTag;
 
