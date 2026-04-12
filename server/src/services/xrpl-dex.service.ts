@@ -34,11 +34,11 @@ const RLUSD_CURRENCY = '524C555344000000000000000000000000000000'; // Hex for "R
 const RLUSD_ISSUER = 'rMxCKbEDwqr76QuheSUMdEGf4B9xJ8m5De';
 
 // Your platform wallet (receives XRP, swaps, sends RLUSD)
-const XRPL_PLATFORM_WALLET_ADDRESS = process.env.XRPL_PLATFORM_WALLET_ADDRESS!;
-const XRPL_PLATFORM_WALLET_SECRET = process.env.XRPL_PLATFORM_WALLET_SECRET!;
+const XRPL_PLATFORM_WALLET_ADDRESS = process.env.XRPL_PLATFORM_WALLET_ADDRESS || '';
+const XRPL_PLATFORM_WALLET_SECRET = process.env.XRPL_PLATFORM_WALLET_SECRET || '';
 
 // Fee collection wallet (receives 1% in RLUSD)
-const FEE_WALLET_ADDRESS = process.env.FEE_WALLET_ADDRESS!;
+const FEE_WALLET_ADDRESS = process.env.FEE_WALLET_ADDRESS || '';
 
 // NETTEN fee percentage
 const NETTEN_FEE_PERCENT = 0.01; // 1%
@@ -72,12 +72,21 @@ interface PayLinkData {
 
 export class XrplDexService {
   private client: Client;
-  private wallet: Wallet;
+  private wallet: Wallet | null = null;
   private isConnected: boolean = false;
 
   constructor() {
     this.client = new Client(XRPL_WSS);
-    this.wallet = Wallet.fromSecret(XRPL_PLATFORM_WALLET_SECRET);
+    if (XRPL_PLATFORM_WALLET_SECRET) {
+      try {
+        this.wallet = Wallet.fromSecret(XRPL_PLATFORM_WALLET_SECRET);
+      } catch (e) {
+        console.warn('[xrpl-dex] Invalid wallet secret, DEX disabled');
+        this.wallet = null;
+      }
+    } else {
+      console.warn('[xrpl-dex] XRPL_PLATFORM_WALLET_SECRET not set, DEX disabled');
+    }
   }
 
   // ---------------------------------------------------------------------------
