@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs'
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 export async function authRoutes(app: FastifyInstance) {
   app.post('/login', { preHandler: [emailRateLimitMiddleware] }, async (req, reply) => {
