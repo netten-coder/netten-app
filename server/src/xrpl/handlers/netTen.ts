@@ -22,7 +22,7 @@ import { db }              from '../../lib/db'
 import { sendRLUSDReward } from '../xrplService'
 import { Resend }          from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
