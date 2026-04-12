@@ -232,10 +232,6 @@ export async function transakWebhookRoutes(app: FastifyInstance) {
    * POST /webhooks/transak
    */
   app.post('/webhooks/transak', {
-    config: {
-      // Disable body parsing to get raw body for signature verification
-      rawBody: true,
-    },
   }, async (request: FastifyRequest, reply: FastifyReply) => {
     const startTime = Date.now();
     
