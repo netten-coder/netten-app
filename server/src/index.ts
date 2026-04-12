@@ -1,3 +1,4 @@
+console.log('[NETTEN] Starting server...');
 // server/src/index.ts
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
