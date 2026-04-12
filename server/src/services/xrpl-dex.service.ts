@@ -34,8 +34,8 @@ const RLUSD_CURRENCY = '524C555344000000000000000000000000000000'; // Hex for "R
 const RLUSD_ISSUER = 'rMxCKbEDwqr76QuheSUMdEGf4B9xJ8m5De';
 
 // Your platform wallet (receives XRP, swaps, sends RLUSD)
-const PLATFORM_WALLET_ADDRESS = process.env.PLATFORM_WALLET_ADDRESS!;
-const PLATFORM_WALLET_SECRET = process.env.PLATFORM_WALLET_SECRET!;
+const XRPL_PLATFORM_WALLET_ADDRESS = process.env.XRPL_PLATFORM_WALLET_ADDRESS!;
+const XRPL_PLATFORM_WALLET_SECRET = process.env.XRPL_PLATFORM_WALLET_SECRET!;
 
 // Fee collection wallet (receives 1% in RLUSD)
 const FEE_WALLET_ADDRESS = process.env.FEE_WALLET_ADDRESS!;
@@ -77,7 +77,7 @@ export class XrplDexService {
 
   constructor() {
     this.client = new Client(XRPL_WSS);
-    this.wallet = Wallet.fromSecret(PLATFORM_WALLET_SECRET);
+    this.wallet = Wallet.fromSecret(XRPL_PLATFORM_WALLET_SECRET);
   }
 
   // ---------------------------------------------------------------------------
@@ -114,7 +114,7 @@ export class XrplDexService {
     // Check if trustline already exists
     const accountLines = await this.client.request({
       command: 'account_lines',
-      account: PLATFORM_WALLET_ADDRESS,
+      account: XRPL_PLATFORM_WALLET_ADDRESS,
       peer: RLUSD_ISSUER,
     });
 
@@ -130,7 +130,7 @@ export class XrplDexService {
     // Create trustline
     const trustSet: TrustSet = {
       TransactionType: 'TrustSet',
-      Account: PLATFORM_WALLET_ADDRESS,
+      Account: XRPL_PLATFORM_WALLET_ADDRESS,
       LimitAmount: {
         currency: RLUSD_CURRENCY,
         issuer: RLUSD_ISSUER,
@@ -218,7 +218,7 @@ export class XrplDexService {
     // Create OfferCreate transaction
     const offer: OfferCreate = {
       TransactionType: 'OfferCreate',
-      Account: PLATFORM_WALLET_ADDRESS,
+      Account: XRPL_PLATFORM_WALLET_ADDRESS,
       // We're paying XRP
       TakerPays: {
         currency: RLUSD_CURRENCY,
@@ -318,7 +318,7 @@ export class XrplDexService {
     // Send to merchant
     const merchantPayment: Payment = {
       TransactionType: 'Payment',
-      Account: PLATFORM_WALLET_ADDRESS,
+      Account: XRPL_PLATFORM_WALLET_ADDRESS,
       Destination: merchantWallet,
       Amount: {
         currency: RLUSD_CURRENCY,
@@ -342,7 +342,7 @@ export class XrplDexService {
     // Send fee to fee wallet
     const feePayment: Payment = {
       TransactionType: 'Payment',
-      Account: PLATFORM_WALLET_ADDRESS,
+      Account: XRPL_PLATFORM_WALLET_ADDRESS,
       Destination: FEE_WALLET_ADDRESS,
       Amount: {
         currency: RLUSD_CURRENCY,
@@ -445,10 +445,10 @@ export class XrplDexService {
     // Subscribe to platform wallet transactions
     await this.client.request({
       command: 'subscribe',
-      accounts: [PLATFORM_WALLET_ADDRESS],
+      accounts: [XRPL_PLATFORM_WALLET_ADDRESS],
     });
 
-    console.log(`👂 Listening for payments to ${PLATFORM_WALLET_ADDRESS}`);
+    console.log(`👂 Listening for payments to ${XRPL_PLATFORM_WALLET_ADDRESS}`);
 
     this.client.on('transaction', async (tx) => {
       const transaction = tx.transaction;
@@ -456,7 +456,7 @@ export class XrplDexService {
       // Only process incoming XRP payments
       if (
         transaction.TransactionType === 'Payment' &&
-        transaction.Destination === PLATFORM_WALLET_ADDRESS &&
+        transaction.Destination === XRPL_PLATFORM_WALLET_ADDRESS &&
         typeof transaction.Amount === 'string' // XRP is a string in drops
       ) {
         const xrpAmount = String(parseFloat(transaction.Amount) / 1000000);
