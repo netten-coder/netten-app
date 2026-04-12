@@ -28,7 +28,7 @@
  * Env vars required:
  *   PLATFORM_WALLET_SEED          — signs AMM deposit + treasury transfers
  *   XRPL_PLATFORM_WALLET_ADDRESS  — source of idle RLUSD
- *   AMM_POOL_ADDRESS              — XRPL AMM pool (RLUSD/XRP pair)
+ *   ENABLE_AMM_YIELD              — set to 'true' to activate AMM deposits
  *   FEE_WALLET_ADDRESS            — source for treasury sweep calculation
  *   FEE_WALLET_SEED               — signs treasury sweep transfers
  *   TREASURY_XRP_WALLET_ADDRESS   — XRP treasury accumulation wallet
@@ -118,7 +118,6 @@ async function sendRLUSD(
 async function depositToAMM(
   client:        Client,
   platformWallet: Wallet,
-  ammAddress:    string,
   amount:        number,
 ): Promise<boolean> {
   try {
@@ -161,7 +160,7 @@ async function depositToAMM(
 export async function runYieldDeposit(): Promise<void> {
   const platformSeed           = process.env.PLATFORM_WALLET_SEED
   const platformAddress        = process.env.XRPL_PLATFORM_WALLET_ADDRESS
-  const ammAddress             = process.env.AMM_POOL_ADDRESS
+  const ammEnabled             = process.env.ENABLE_AMM_YIELD === 'true'
   const feeWalletSeed          = process.env.FEE_WALLET_SEED
   const feeWalletAddress       = process.env.FEE_WALLET_ADDRESS
   const treasuryXRPAddress     = process.env.TREASURY_XRP_WALLET_ADDRESS
@@ -186,7 +185,7 @@ export async function runYieldDeposit(): Promise<void> {
     console.log(`[yield] Platform wallet RLUSD balance: $${platformBalance.toFixed(4)}`)
 
     // ── Step 2: AMM deposit — deploy 65% of idle balance ──────────────────
-    if (ammAddress && platformBalance > MIN_AMM_DEPOSIT) {
+    if (ammEnabled && platformBalance > MIN_AMM_DEPOSIT) {
       const liquid   = platformBalance * LIQUID_RESERVE_RATIO
       const toDeposit = parseFloat((platformBalance * AMM_DEPLOY_RATIO).toFixed(6))
 
@@ -196,7 +195,7 @@ export async function runYieldDeposit(): Promise<void> {
         `deploying $${toDeposit.toFixed(2)} → AMM`,
       )
 
-      const success = await depositToAMM(client, platformWallet, ammAddress, toDeposit)
+      const success = await depositToAMM(client, platformWallet, toDeposit)
 
       if (success) {
         console.log(`[yield] ✓ AMM deposit successful — $${toDeposit.toFixed(2)} RLUSD deployed`)
@@ -212,8 +211,8 @@ export async function runYieldDeposit(): Promise<void> {
       } else {
         console.error('[yield] AMM deposit failed — RLUSD remains in platform wallet')
       }
-    } else if (!ammAddress) {
-      console.warn('[yield] AMM_POOL_ADDRESS not set — skipping AMM deposit')
+    } else if (!ammEnabled) {
+      console.warn('[yield] ENABLE_AMM_YIELD not true — skipping AMM deposit')
     } else {
       console.log(`[yield] Platform balance $${platformBalance.toFixed(2)} below minimum — skipping AMM deposit`)
     }
