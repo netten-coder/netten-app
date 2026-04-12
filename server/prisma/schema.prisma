@@ -32,6 +32,16 @@ enum AddOnType {
   INVOICING
 }
 
+enum MerchantTier {
+  FREE_BETA        // 10 spots - $0 forever, 1% fee
+  EARLY_ADOPTER    // 55 spots - $33/mo forever, 1% fee
+  FOUNDING         // 777 spots - $44/mo forever, 1% fee
+  STARTER          // $55/mo, 1% fee
+  PRO              // $77/mo, 1% fee
+  BUSINESS         // $99/mo, 1% fee
+  ENTERPRISE       // $999/mo, custom
+}
+
 // ── MERCHANT ──────────────────────────────────────────────────────────────────
 
 model Merchant {
@@ -44,6 +54,15 @@ model Merchant {
   isVerified    Boolean @default(false)
   isActive      Boolean @default(true)
   plan          String  @default("FOUNDING")
+  
+  // Beta Tester Fields
+  tier              MerchantTier @default(FOUNDING)
+  isBetaTester      Boolean      @default(false)
+  betaStartDate     DateTime?
+  betaEndDate       DateTime?
+  betaNotes         String?
+  betaWeeklyCheckin Int          @default(0)  // 0, 1, 2, 3 for check-in tracking
+  
 referralRewardPaid  Boolean   @default(false)
   rewardBalance       Float @default(0)
   totalRewardsEarned  Float @default(0)
@@ -318,4 +337,44 @@ model EmailLog {
 model GlobalCounter {
   id    String @id @default("founding_spots")
   value Int    @default(0)
+}
+
+// ── BETA TESTER TRACKING ─────────────────────────────────────────────────────
+
+model BetaTester {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  businessName    String
+  businessType    String?   // e.g., "Cafe/Apparel", "Freelancer", "DAO"
+  contactName     String
+  merchantId      String?   // Links to Merchant once they sign up
+  
+  // Beta Program Tracking
+  status          String    @default("INVITED")  // INVITED, ONBOARDING, ACTIVE, COMPLETED, DROPPED
+  startDate       DateTime?
+  endDate         DateTime?
+  
+  // Check-in Tracking
+  week1CheckIn    DateTime?
+  week1Notes      String?
+  week2CheckIn    DateTime?
+  week2Notes      String?
+  week3CheckIn    DateTime?
+  week3Notes      String?
+  
+  // Metrics
+  totalTransactions   Int    @default(0)
+  totalVolume         Float  @default(0)
+  successRate         Float  @default(0)
+  bugsReported        Int    @default(0)
+  
+  // Outcome
+  willContinue        Boolean?
+  testimonialGiven    Boolean  @default(false)
+  testimonialText     String?
+  lifetimeFreeGranted Boolean  @default(false)
+  
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }

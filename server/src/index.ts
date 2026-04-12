@@ -27,6 +27,7 @@ import { onrampRoutes }       from './routes/onramp'
 import { xamanRoutes }        from './routes/xaman'
 import securityPlugin from './middleware/security'
 import { emailRoutes } from './routes/email-routes'
+import { transakWebhookRoutes } from './routes/transak.webhook'
 
 const app = Fastify({ logger: process.env.NODE_ENV !== 'production' })
 
@@ -78,6 +79,9 @@ async function start() {
   await app.register(offrampRoutes,      { prefix: '/api/v1' })
   await app.register(xamanRoutes,        { prefix: '/api/v1/xaman' })
   await app.register(webhookRoutes,     { prefix: '/api/v1/webhooks' })
+  
+  // External webhooks (no auth, signature-verified)
+  await app.register(transakWebhookRoutes)  // Handles POST /webhooks/transak
   // await app.register(emailRoutes,      { prefix: '/api/email' })
 
   const port = parseInt(process.env.PORT || '3001')
