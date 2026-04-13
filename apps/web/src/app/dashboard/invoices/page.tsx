@@ -146,7 +146,18 @@ export default function InvoicesPage() {
                     <td className="px-5 py-3"><span className={STATUS_BADGE[inv.status]||'badge-gray'}>{inv.status}</span></td>
                     <td className="px-5 py-3 text-gray-400">{inv.dueDate?new Date(inv.dueDate).toLocaleDateString():'—'}</td>
                     <td className="px-5 py-3"><div className="flex items-center gap-3 justify-end">
-                      {payLinkUrl&&<a href={payLinkUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-brand hover:text-brand-light transition-colors">Preview</a>}
+                      {payLinkUrl && (
+                        <button 
+                          onClick={() => setPreviewInvoice(inv)}
+                          className="p-1.5 rounded-lg hover:bg-surface-hover transition-colors group"
+                          title="Preview invoice"
+                        >
+                          <svg className="w-4 h-4 text-gray-500 group-hover:text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        </button>
+                      )}
                       {inv.status!=='CANCELLED'&&inv.status!=='PAID'&&inv.clientEmail&&<button onClick={()=>sendInvoice(inv.id)} disabled={sending===inv.id} className="text-xs text-gray-400 hover:text-white transition-colors disabled:opacity-40">{sending===inv.id?'Sending…':'Send'}</button>}
                       {inv.status!=='CANCELLED'&&inv.status!=='PAID'&&<button onClick={()=>cancel(inv.id)} className="text-xs text-red-400 hover:text-red-300 transition-colors">Cancel</button>}
                     </div></td>

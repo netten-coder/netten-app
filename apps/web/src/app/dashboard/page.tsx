@@ -120,7 +120,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="space-y-2">
-            {d.recentTransactions.map((txn: any) => (
+            {d.recentTransactions.slice(0, 10).map((txn: any) => (
               <div key={txn.id} className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-surface-hover transition-colors">
                 <div className="flex items-center gap-3">
                   <span className={`text-sm font-bold ${COIN_COLORS[txn.fromCoin] || 'text-gray-400'}`}>{txn.fromCoin}</span>

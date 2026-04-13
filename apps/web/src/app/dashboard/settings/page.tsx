@@ -254,7 +254,24 @@ export default function SettingsPage() {
           </div>
           <span className="text-xs px-3 py-1 rounded-full bg-brand/20 text-brand-light border border-brand/30">{merchant.plan}</span>
         </div>
-        <p className="text-gray-500 text-xs mt-3">To upgrade, contact <a href="mailto:support@netten.app" className="text-brand hover:text-brand-light">support@netten.app</a></p>
+        <div className="mt-4 flex gap-3">
+          {merchant.plan !== 'PRO' && (
+            <button 
+              onClick={() => window.open('https://netten.app/pricing', '_blank')}
+              className="px-4 py-2 bg-brand hover:bg-brand-dark text-white text-sm font-medium rounded-xl transition-colors"
+            >
+              Upgrade to Pro →
+            </button>
+          )}
+          {merchant.plan !== 'BUSINESS' && merchant.plan !== 'PRO' && (
+            <button 
+              onClick={() => window.open('https://netten.app/pricing', '_blank')}
+              className="px-4 py-2 bg-surface-hover hover:bg-surface-card text-white text-sm font-medium rounded-xl border border-surface-border transition-colors"
+            >
+              View Plans
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
