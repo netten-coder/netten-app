@@ -12,6 +12,9 @@ const COINS = [
   { id: 'BTC',   label: 'Bitcoin',  symbol: 'BTC',   color: '#F7931A', icon: '₿' },
   { id: 'ETH',   label: 'Ethereum', symbol: 'ETH',   color: '#627EEA', icon: 'Ξ' },
   { id: 'SOL',   label: 'Solana',   symbol: 'SOL',   color: '#9945FF', icon: '◎' },
+  { id: 'XLM',   label: 'Stellar',  symbol: 'XLM',   color: '#14B6E7', icon: '✦' },
+  { id: 'ADA',   label: 'Cardano',  symbol: 'ADA',   color: '#0033AD', icon: '₳' },
+  { id: 'HBAR',  label: 'Hedera',   symbol: 'HBAR',  color: '#3D3D3D', icon: 'ℏ' },
 ]
 
 type Step = 'select' | 'qr' | 'waiting' | 'done' | 'error'
@@ -22,6 +25,9 @@ const WALLET_APPS: Record<string, string[]> = {
   SOL:   ['Phantom', 'Coinbase', 'Solflare'],
   XRP:   ['Xaman', 'Coinbase', 'Trust Wallet'],
   RLUSD: ['Xaman', 'Coinbase', 'Trust Wallet'],
+  XLM:   ['Lobstr', 'Coinbase', 'Trust Wallet'],
+  ADA:   ['Yoroi', 'Daedalus', 'Trust Wallet'],
+  HBAR:  ['HashPack', 'Blade', 'Wallawallet'],
 }
 
 // Fee constants
