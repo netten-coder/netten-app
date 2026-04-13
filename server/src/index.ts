@@ -26,6 +26,7 @@ import { runYieldDeposit }       from './jobs/yieldDeposit'
 import { subscriptionRoutes } from './routes/subscriptions'
 import { offrampRoutes }      from './routes/offramp'
 import { onrampRoutes }       from './routes/onramp'
+import { referralRoutes }     from './routes/referrals'
 import { xamanRoutes }        from './routes/xaman'
 import securityPlugin from './middleware/security'
 import { emailRoutes } from './routes/email-routes'
@@ -84,6 +85,7 @@ async function start() {
   await app.register(invoiceRoutes,     { prefix: '/api/v1/invoices' })
   await app.register(linkRoutes,        { prefix: '/api/v1/payment-links' })
   await app.register(onrampRoutes,      { prefix: '/api/v1/payment-links' })
+  await app.register(referralRoutes,    { prefix: '/api/v1/referrals' })
   await app.register(rewardRoutes,      { prefix: '/api/v1/rewards' })
   await app.register(waitlistRoutes, { prefix: '/api/v1' })
   await app.register(emailRoutes, { prefix: '/api/email' })
