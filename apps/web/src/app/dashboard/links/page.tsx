@@ -14,6 +14,7 @@ export default function LinksPage() {
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
   function load() {
     api.links.list()
@@ -64,9 +65,9 @@ export default function LinksPage() {
     setTimeout(() => setCopied(null), 2000)
   }
 
-  // Preview in same page (not new tab)
-  function previewLink(slug: string) {
-    router.push(`/pay/${slug}`)
+  // Preview in modal (same page, not new tab)
+  function previewLink(url: string) {
+    setPreviewUrl(url)
   }
 
   // Extract slug from URL
@@ -122,6 +123,40 @@ export default function LinksPage() {
         </div>
       )}
 
+      {/* Preview Modal */}
+      {previewUrl && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="relative w-full max-w-lg h-[80vh] bg-surface rounded-2xl overflow-hidden border border-surface-border">
+            <div className="absolute top-3 right-3 z-10 flex gap-2">
+              <a 
+                href={previewUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg bg-surface-card hover:bg-surface-hover text-gray-400 hover:text-white transition-colors"
+                title="Open in new tab"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              <button 
+                onClick={() => setPreviewUrl(null)}
+                className="p-2 rounded-lg bg-surface-card hover:bg-surface-hover text-gray-400 hover:text-white transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <iframe 
+              src={previewUrl} 
+              className="w-full h-full border-0"
+              title="Pay Link Preview"
+            />
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex items-center justify-center py-16">
           <div className="w-8 h-8 rounded-full border-2 border-brand border-t-transparent animate-spin" />
@@ -158,7 +193,7 @@ export default function LinksPage() {
                 </button>
                 {/* Preview in same page instead of new tab */}
                 <button 
-                  onClick={() => previewLink(getSlugFromUrl(link.url))}
+                  onClick={() => previewLink(link.url)}
                   className="btn-secondary text-xs py-1.5 px-3"
                 >
                   Preview

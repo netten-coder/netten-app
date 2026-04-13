@@ -92,6 +92,39 @@ export default function InvoicesPage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
+      {/* Invoice Preview Modal */}
+      {previewInvoice && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="relative w-full max-w-lg h-[80vh] bg-surface rounded-2xl overflow-hidden border border-surface-border">
+            <div className="absolute top-3 right-3 z-10 flex gap-2">
+              <a 
+                href={`${process.env.NEXT_PUBLIC_APP_URL || 'https://netten.app'}/pay/${previewInvoice.payLinkSlug}`}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="p-2 rounded-lg bg-surface-card hover:bg-surface-hover text-gray-400 hover:text-white transition-colors"
+                title="Open in new tab"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              <button 
+                onClick={() => setPreviewInvoice(null)}
+                className="p-2 rounded-lg bg-surface-card hover:bg-surface-hover text-gray-400 hover:text-white transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <iframe 
+              src={`${process.env.NEXT_PUBLIC_APP_URL || 'https://netten.app'}/pay/${previewInvoice.payLinkSlug}`}
+              className="w-full h-full border-0"
+              title="Invoice Preview"
+            />
+          </div>
+        </div>
+      )}
       <div className="flex items-center justify-between mb-6">
         <div><h1 className="text-white font-semibold text-2xl">Invoices</h1><p className="text-gray-400 text-sm mt-0.5">Create, preview, and send crypto invoices</p></div>
         <button onClick={()=>{ setForm(EMPTY_FORM); setShowForm(true) }} className="btn-primary text-sm">+ New Invoice</button>
