@@ -26,7 +26,7 @@
  *   Both compound weekly — no capital deployed from outside Netten
  *
  * Env vars required:
- *   PLATFORM_WALLET_SEED          — signs AMM deposit + treasury transfers
+ *   XRPL_PLATFORM_WALLET_SEED     — signs AMM deposit + treasury transfers (already in Railway)
  *   XRPL_PLATFORM_WALLET_ADDRESS  — source of idle RLUSD
  *   ENABLE_AMM_YIELD              — set to 'true' to activate AMM deposits
  *   FEE_WALLET_ADDRESS            — source for treasury sweep calculation
@@ -158,7 +158,7 @@ async function depositToAMM(
  * Safe to call multiple times — no-ops if balances are below thresholds.
  */
 export async function runYieldDeposit(): Promise<void> {
-  const platformSeed           = process.env.PLATFORM_WALLET_SEED
+  const platformSeed           = process.env.XRPL_PLATFORM_WALLET_SEED ?? process.env.PLATFORM_WALLET_SEED
   const platformAddress        = process.env.XRPL_PLATFORM_WALLET_ADDRESS
   const ammEnabled             = process.env.ENABLE_AMM_YIELD === 'true'
   const feeWalletSeed          = process.env.FEE_WALLET_SEED
