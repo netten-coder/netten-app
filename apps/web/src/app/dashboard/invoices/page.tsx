@@ -99,7 +99,7 @@ export default function InvoicesPage() {
           <div className="relative w-full max-w-lg h-[80vh] bg-surface rounded-2xl overflow-hidden border border-surface-border">
             <div className="absolute top-3 right-3 z-10 flex gap-2">
               <a 
-                href={`${process.env.NEXT_PUBLIC_APP_URL || 'https://netten.app'}/pay/${previewInvoice.payLinkSlug}`}
+                href={previewInvoice.payLinkUrl}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-surface-card hover:bg-surface-hover text-gray-400 hover:text-white transition-colors"
@@ -119,7 +119,7 @@ export default function InvoicesPage() {
               </button>
             </div>
             <iframe 
-              src={`${process.env.NEXT_PUBLIC_APP_URL || 'https://netten.app'}/pay/${previewInvoice.payLinkSlug}`}
+              src={previewInvoice.payLinkUrl}
               className="w-full h-full border-0"
               title="Invoice Preview"
             />
