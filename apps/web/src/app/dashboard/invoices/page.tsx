@@ -65,6 +65,7 @@ export default function InvoicesPage() {
   const [form, setForm] = useState<InvoiceForm>(EMPTY_FORM)
   const [saving, setSaving] = useState(false)
   const [sending, setSending] = useState<string|null>(null)
+  const [previewInvoice, setPreviewInvoice] = useState<any>(null)
   const invoiceNumber = `INV-${String((invoices.length+1)).padStart(4,'0')}`
   const load = useCallback(() => { api.invoices.list().then((d:any)=>setInvoices(d.invoices||[])).catch(console.error).finally(()=>setLoading(false)) },[])
   useEffect(()=>{ load() },[load])
