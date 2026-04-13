@@ -90,7 +90,7 @@ export default function TutorialPage() {
           <span className="text-3xl">💬</span>
           <div>
             <h3 className="text-white font-semibold mb-1">Still have questions?</h3>
-            <p className="text-gray-400 text-sm mb-3">We\'re here to help you succeed.</p>
+            <p className="text-gray-400 text-sm mb-3">We are here to help you succeed.</p>
             <a href="mailto:support@netten.app" className="btn-primary text-sm inline-block">Contact Support →</a>
           </div>
         </div>
