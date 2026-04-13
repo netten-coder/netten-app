@@ -182,7 +182,7 @@ export default function InvoicesPage() {
                     <td className="px-5 py-3"><div className="flex items-center gap-3 justify-end">
                       {payLinkUrl && (
                         <button 
-                          onClick={() => setPreviewInvoice(inv)}
+                          onClick={() => setPreviewInvoice({...inv, payLinkUrl})}
                           className="p-1.5 rounded-lg hover:bg-surface-hover transition-colors group"
                           title="Preview invoice"
                         >
