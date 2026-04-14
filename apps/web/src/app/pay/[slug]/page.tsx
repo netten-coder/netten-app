@@ -73,8 +73,8 @@ export default function PayPage() {
   // Fee calculations - 2% total (1% platform + 1% conversion)
   const baseAmount = link?.amountUsd || parseFloat(amount) || 0
   const platformFee = parseFloat((baseAmount * PLATFORM_FEE_RATE).toFixed(2))
-  const conversionFee = parseFloat((baseAmount * 0 // removed).toFixed(2))
-  const totalFees = parseFloat((platformFee + conversionFee).toFixed(2))
+  // conversionFee removed - now using single 2% platform fee
+  const totalFees = platformFee
   const totalAmount = parseFloat((baseAmount + totalFees).toFixed(2))
 
   async function initiate() {
@@ -306,14 +306,11 @@ export default function PayPage() {
                 </div>
                 
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Platform fee (1%)</span>
+                  <span className="text-gray-500">Platform fee (2%)</span>
                   <span className="text-gray-300">+${platformFee.toFixed(2)}</span>
                 </div>
                 
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Conversion fee (1%)</span>
-                  <span className="text-gray-300">+${conversionFee.toFixed(2)}</span>
-                </div>
                 
                 <div className="border-t border-surface-border pt-2.5 mt-2">
                   <div className="flex justify-between">
@@ -391,13 +388,10 @@ export default function PayPage() {
                   <span className="text-gray-300">${baseAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Platform fee (1%)</span>
+                  <span className="text-gray-500">Platform fee (2%)</span>
                   <span className="text-gray-300">+${platformFee.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Conversion fee (1%)</span>
-                  <span className="text-gray-300">+${conversionFee.toFixed(2)}</span>
-                </div>
                 <div className="flex justify-between border-t border-surface-border pt-2 mt-2">
                   <span className="text-white font-medium">Send exactly</span>
                   <span className="text-brand font-bold">{txn.payAmount} {txn.fromCoin}</span>
