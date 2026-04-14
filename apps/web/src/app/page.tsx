@@ -82,7 +82,7 @@ const FAQS = [
   },
   {
     q: "How do my clients pay if they don't have crypto?",
-    a: "They don't need crypto. When your client clicks your pay link, they can pay with card or bank transfer through MoonPay. MoonPay handles the conversion — your client pays in their currency, you receive RLUSD.",
+    a: "They can use any crypto wallet — Coinbase, Trust Wallet, MetaMask, Xaman, and more. If they already have crypto, they pay in seconds. Debit card payments are coming soon.",
   },
   {
     q: 'Is my money safe?',
@@ -287,7 +287,7 @@ export default function WaitlistPage() {
         .sp-label{font-size:12px;color:rgba(255,255,255,.35);letter-spacing:1px;text-transform:uppercase;width:100%;margin-bottom:6px;}
         .sp-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:7px 14px;font-size:13px;color:rgba(255,255,255,.55);text-decoration:none;transition:all .2s;cursor:pointer;}.sp-chip:hover{background:rgba(124,255,107,.08);border-color:rgba(124,255,107,.25);color:rgba(255,255,255,.8);transform:translateY(-1px);}
         .sp-dot{width:5px;height:5px;background:var(--e);border-radius:50%;}
-        .moonpay-row{display:flex;align-items:center;gap:10px;background:rgba(100,150,255,.06);border:1px solid rgba(100,150,255,.15);border-radius:12px;padding:14px 16px;margin-bottom:24px;}
+        .debit-soon-row{display:flex;align-items:center;gap:10px;background:rgba(100,150,255,.06);border:1px solid rgba(100,150,255,.15);border-radius:12px;padding:14px 16px;margin-bottom:24px;}
         .mp-icon{width:32px;height:32px;background:rgba(100,150,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
         .mp-text{font-size:15px;color:rgba(255,255,255,.65);line-height:1.5;}
         .mp-text strong{color:white;}
@@ -460,7 +460,7 @@ export default function WaitlistPage() {
         </div>
 
         {/* MoonPay card payment callout */}
-        <div className="moonpay-row">
+        <div className="debit-soon-row">
           <div className="mp-icon">💳</div>
           <div className="mp-text">
             <strong>Your clients don't need crypto.</strong> They can pay by Visa, Mastercard, or Apple Pay via MoonPay — you still receive RLUSD instantly.
@@ -488,7 +488,7 @@ export default function WaitlistPage() {
           <a href="https://xrpl.org" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>XRP Ledger</a>
           <a href="https://ripple.com/solutions/crypto-liquidity/" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>RLUSD by Ripple</a>
           <a href="https://xaman.app" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>Xaman Wallet</a>
-          <a href="https://www.moonpay.com" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>MoonPay</a>
+          <a href="#" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>Debit Cards</a>
           <a href="https://xrplgrants.org" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>XRPL Grants</a>
           <a href="https://discord.gg/sfX3ERAMjH" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>XRPL Discord</a>
         </div>
@@ -552,8 +552,8 @@ export default function WaitlistPage() {
             <div className="hiw-step">
               <div className="hiw-num">2</div>
               <div className="hiw-content">
-                <h3>Client pays in any crypto — or by card</h3>
-                <p>They scan the QR code and pay in BTC, ETH, SOL, XRP, or RLUSD. No crypto? They pay by Visa or Mastercard via MoonPay.</p>
+                <h3>Client pays in any crypto</h3>
+                <p>They scan the QR code and pay in BTC, ETH, SOL, XRP, RLUSD, or other supported coins. Fast, simple, secure.</p>
               </div>
             </div>
             <div className="hiw-step">
@@ -567,7 +567,7 @@ export default function WaitlistPage() {
               <div className="hiw-num">4</div>
               <div className="hiw-content">
                 <h3>Net Ten rewards land automatically</h3>
-                <p>Every 10 payments, RLUSD drops into your wallet. Withdraw to your bank anytime via MoonPay. Zero effort.</p>
+                <p>Every 10 payments, RLUSD drops into your wallet. Withdraw to your bank anytime via Xaman or your preferred exchange. Zero effort.</p>
               </div>
             </div>
           </div>

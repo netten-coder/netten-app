@@ -31,8 +31,7 @@ const WALLET_APPS: Record<string, string[]> = {
 }
 
 // Fee constants
-const PLATFORM_FEE_RATE = 0.01  // 1% platform fee
-const CONVERSION_FEE_RATE = 0.01 // 1% conversion fee
+const PLATFORM_FEE_RATE = 0.02  // 2% platform fee (flat rate)
 
 export default function PayPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -74,7 +73,7 @@ export default function PayPage() {
   // Fee calculations - 2% total (1% platform + 1% conversion)
   const baseAmount = link?.amountUsd || parseFloat(amount) || 0
   const platformFee = parseFloat((baseAmount * PLATFORM_FEE_RATE).toFixed(2))
-  const conversionFee = parseFloat((baseAmount * CONVERSION_FEE_RATE).toFixed(2))
+  const conversionFee = parseFloat((baseAmount * 0 // removed).toFixed(2))
   const totalFees = parseFloat((platformFee + conversionFee).toFixed(2))
   const totalAmount = parseFloat((baseAmount + totalFees).toFixed(2))
 
