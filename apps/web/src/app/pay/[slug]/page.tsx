@@ -1,4 +1,4 @@
-'use client'
+ 'use client'
 import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import { QRCodeSVG } from 'qrcode.react'
@@ -310,8 +310,6 @@ export default function PayPage() {
                   <span className="text-gray-300">+${platformFee.toFixed(2)}</span>
                 </div>
                 
-                <div className="flex justify-between text-sm">
-                
                 <div className="border-t border-surface-border pt-2.5 mt-2">
                   <div className="flex justify-between">
                     <span className="text-white font-semibold">Total to pay</span>
@@ -391,7 +389,6 @@ export default function PayPage() {
                   <span className="text-gray-500">Platform fee (2%)</span>
                   <span className="text-gray-300">+${platformFee.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
                 <div className="flex justify-between border-t border-surface-border pt-2 mt-2">
                   <span className="text-white font-medium">Send exactly</span>
                   <span className="text-brand font-bold">{txn.payAmount} {txn.fromCoin}</span>
