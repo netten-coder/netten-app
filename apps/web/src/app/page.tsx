@@ -488,10 +488,11 @@ export default function WaitlistPage() {
           <a href="https://xrpl.org" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>XRP Ledger</a>
           <a href="https://ripple.com/solutions/crypto-liquidity/" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>RLUSD by Ripple</a>
           <a href="https://xaman.app" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>Xaman Wallet</a>
-          <a href="#" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>Debit Cards</a>
+          <a href="https://www.moonpay.com" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>Debit Cards</a>
           <a href="https://xrplgrants.org" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>XRPL Grants</a>
           <a href="https://discord.gg/sfX3ERAMjH" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>XRPL Discord</a>
-        </div>
+          <a href="https://www.saashub.com/netten?utm_source=badge&utm_campaign=badge&utm_content=netten&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener noreferrer" className="sp-chip"><div className="sp-dot"/>Verified on SaaSHub</a>
+          </div>  
 
         <div className="divider"/>
 

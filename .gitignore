@@ -43,3 +43,4 @@ prisma/migrations/
 coverage/
 .github/
 *.bak
+*.code-search
