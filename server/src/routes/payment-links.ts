@@ -51,7 +51,7 @@ export async function linkRoutes(app: FastifyInstance) {
     })
 
     p.delete('/:id', async (req: any) => {
-      await (db as any).paymentLink.update({ where: { id: req.params.id, merchantId: req.user.merchantId }, data: { isActive: false } })
+ await (db as any).paymentLink.update({ where: {id:req.params.id, merchantId: req.user.merchantId }, data: {isActive: false} })
       return { success: true }
     })
   })
